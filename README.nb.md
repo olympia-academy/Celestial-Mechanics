@@ -14,7 +14,7 @@ Appen bruker ingen nettjenester, eksterne skrifter eller npm-avhengigheter.
 Prosjektet er utviklet av Dag-Vidar Krogstad Bauer i samarbeid med
 **Codex fra OpenAI**. Kildekoden er offentlig tilgjengelig i dette repositoryet.
 
-**[Åpne simulatoren](https://dagvidb.github.io/Himmelmekanikk/)**
+**[Åpne simulatoren](https://dagvidb.github.io/Celestial-Mechanics/)**
 
 ## Åpne appen
 

@@ -14,7 +14,7 @@ The app uses no online services, external fonts or npm dependencies.
 The project was developed by Dag-Vidar Krogstad Bauer in collaboration with
 **Codex from OpenAI**. The source code is publicly available in this repository.
 
-**[Open the simulator](https://dagvidb.github.io/Himmelmekanikk/)**
+**[Open the simulator](https://dagvidb.github.io/Celestial-Mechanics/)**
 
 ## Open the app
 

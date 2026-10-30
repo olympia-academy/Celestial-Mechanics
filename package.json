@@ -1,5 +1,5 @@
 {
-  "name": "himmelmekanikk",
+  "name": "celestial-mechanics",
   "private": true,
   "version": "1.0.0",
   "description": "An interactive simulator of Newton's two-body problem",
