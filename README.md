@@ -1,8 +1,13 @@
-# Himmelmekanikk
+# Himmelmekanikk (Celestial mechanics)
+
+**Norsk** · [English](README.en.md)
 
 En interaktiv simulator for Newtons tolegemeproblem. Juster masser og
 startbetingelser, og utforsk sirkelbaner, ellipser, parabler og hyperbler.
 Appen bruker ingen nettjenester, eksterne skrifter eller npm-avhengigheter.
+
+Prosjektet er utviklet av Dag-Vidar Krogstad Bauer i samarbeid med
+**Codex fra OpenAI**. Kildekoden er offentlig tilgjengelig i dette repositoryet.
 
 **[Åpne simulatoren](https://dagvidb.github.io/Himmelmekanikk/)**
 
@@ -51,23 +56,160 @@ beregner farten på nytt med den gjeldende totale massen. Knappen
 
 ## Fysikk og enheter
 
-Enhetene er G = M = R = 1. Fart måles i sqrt(GM/R), tid i
-sqrt(R^3/GM). Den relative posisjonen r = r_m - r_M oppfyller
-r'' = -(1+q) r/|r|^3. I massesentersystemet er
-r_M = -q r/(1+q) og r_m = r/(1+q).
+### Fra to legemer til én relativ bane
 
-Energien epsilon = v^2/2 - mu/r og dreieimpulsen h = r × v er
-oppgitt per redusert masse; ved q = 0 brukes testpartikkelgrensen.
-A = v × h - mu rhat og e = |A|/mu. Retning 0 grader gir en
-tangentiell hastighet mot klokken; positive vinkler gir utoverrettet
-radialkomponent. Alle startposisjoner er (r0,0).
+La $M$ og $m$ være massene, og sett $q=m/M$. Begge legemene beveger seg.
+Den relative posisjonen $\mathbf r=\mathbf r_m-\mathbf r_M$ oppfyller
+
+$$
+\ddot{\mathbf r}=-\frac{G(M+m)}{r^3}\mathbf r,
+\qquad r=\lVert\mathbf r\rVert.
+$$
+
+Simuleringen bruker $M$ som masseenhet og en fast referanselengde $R$ som
+lengdeenhet. De tilhørende enhetene for fart og tid er
+
+$$
+v_*=\sqrt{\frac{GM}{R}},
+\qquad t_*=\sqrt{\frac{R^3}{GM}}.
+$$
+
+I disse dimensjonsløse enhetene er $G=M=R=1$. Skriv
+$\mu=1+q$ for gravitasjonsparameteren. Da blir bevegelsesligningen
+
+$$
+\ddot{\mathbf r}=-\frac{\mu}{r^3}\mathbf r.
+$$
+
+Når den relative banen er kjent, følger begge legemenes posisjoner i
+massesentersystemet direkte:
+
+$$
+\mathbf r_M=-\frac{q}{1+q}\mathbf r,
+\qquad
+\mathbf r_m=\frac{1}{1+q}\mathbf r.
+$$
+
+Ved $q=0$ får vi testpartikkelgrensen: $M$ står i ro, og testpartikkelen
+påvirker ikke sentrallegemet. Ved $q=1$ beveger legemene seg symmetrisk
+om det felles massesenteret.
+
+### Energi, dreieimpuls og A-vektoren
+
+Med $\mathbf v=\dot{\mathbf r}$ er den spesifikke energien og dreieimpulsen
+
+$$
+\varepsilon=\frac{v^2}{2}-\frac{\mu}{r},
+\qquad
+\mathbf h=\mathbf r\times\mathbf v.
+$$
+
+«Spesifikk» betyr her per redusert masse, $m_{\mathrm{red}}=Mm/(M+m)$.
+Dermed er den totale energien i massesentersystemet
+$E=m_{\mathrm{red}}\varepsilon$, og dreieimpulsen er
+$\mathbf L=m_{\mathrm{red}}\mathbf h$, når størrelsene uttrykkes i
+konsistente enheter. Ved $q=0$ bruker appen grenseverdiene for de
+spesifikke størrelsene.
+
+Begge er bevart. Siden $\mathbf h$ er konstant, ligger banen i et fast
+plan. For denne kraftloven er også Laplace–Runge–Lenz-vektoren bevart:
+
+$$
+\mathbf A=\mathbf v\times\mathbf h-\mu\hat{\mathbf r},
+\qquad
+\hat{\mathbf r}=\frac{\mathbf r}{r}.
+$$
+
+Bevaringen kan kontrolleres direkte: Newtons akselerasjon gir
+$\mathbf a\times\mathbf h=\mu\,d\hat{\mathbf r}/dt$. Siden
+$\dot{\mathbf h}=\mathbf 0$, kansellerer de to leddene i
+$d\mathbf A/dt$ hverandre.
+
+For en ikke-sirkulær, ikke-radiell bane peker $\mathbf A$ mot periapsis,
+punktet med minst avstand mellom legemene. Lengden bestemmer hvor mye
+banen avviker fra en sirkel: eksentrisiteten er $e=\lVert\mathbf A\rVert/\mu$.
+For en sirkel er $\mathbf A=\mathbf 0$, og ingen periapsisretning er utpekt.
+
+### Baneformen fra de bevarte størrelsene
+
+Vi kan finne baneformen uten å løse for posisjonen som funksjon av tiden.
+Skalarproduktet av $\mathbf A$ og $\mathbf r$ gir, med $h=\lVert\mathbf h\rVert$,
+
+$$
+\mathbf A\cdot\mathbf r
+=(\mathbf v\times\mathbf h)\cdot\mathbf r-\mu r
+=h^2-\mu r.
+$$
+
+La $\varphi$ være vinkelen fra $\mathbf A$ til $\mathbf r$. Da er venstresiden
+$\mu e r\cos\varphi$. Ved å samle leddene får vi kjeglesnittets polarligning:
+
+$$
+r(\varphi)=\frac{p}{1+e\cos\varphi},
+\qquad p=\frac{h^2}{\mu}.
+$$
+
+For en sirkel, der $e=0$, kan vinkelens nullretning velges fritt.
+Å kvadrere uttrykket for $\mathbf A$ gir dessuten
+
+$$
+e^2=1+\frac{2\varepsilon h^2}{\mu^2}.
+$$
+
+For $h\ne 0$ gir dette fire banetyper:
+
+| Bane | Eksentrisitet | Spesifikk energi |
+| --- | --- | --- |
+| Sirkel | $e=0$ | $\varepsilon<0$ |
+| Ellipse | $0<e<1$ | $\varepsilon<0$ |
+| Parabel | $e=1$ | $\varepsilon=0$ |
+| Hyperbel | $e>1$ | $\varepsilon>0$ |
+
+Hvis $h=0$, er bevegelsen radiell. Da blir $e=1$ uansett energi, så
+tabellen kan ikke brukes til å klassifisere bevegelsen. Appen viser
+dette som «Radiell bevegelse» og stopper ved en eventuell kollisjon.
+
+For en bundet, ikke-radiell bane er store halvakse og omløpstid
+
+$$
+a=-\frac{\mu}{2\varepsilon},
+\qquad
+T=2\pi\sqrt{\frac{a^3}{\mu}}.
+$$
+
+Avstandene ved periapsis og apoapsis er henholdsvis
+$r_{\mathrm p}=a(1-e)$ og $r_{\mathrm a}=a(1+e)$.
+Sirkel- og unnslippingsfarten ved avstand $r$ er
+
+$$
+v_{\mathrm c}=\sqrt{\frac{\mu}{r}},
+\qquad
+v_{\mathrm{esc}}=\sqrt{\frac{2\mu}{r}}.
+$$
+
+Dette er **relative** hastigheter mellom legemene. Derfor avhenger de
+av begge massene gjennom $\mu=1+q$. For å gi en sirkelbane må
+sirkelhastigheten dessuten være rettet tangentialt.
+
+### Startbetingelser og beregningsmetode
+
+Alle relative startposisjoner er $\mathbf r_0=(r_0,0)$. Vinkelen
+$\beta$ i kontrollpanelet måles fra den positive tangenten:
+
+$$
+\mathbf v_0=v_0(\sin\beta,\cos\beta).
+$$
+
+Null grader gir tangentiell fart mot klokken; positive vinkler gir en
+utoverrettet radialkomponent. Når masseforholdet endres, beholdes
+startfarten i de faste enhetene. Dermed endres energien og ofte baneformen.
 
 Motoren løser den universelle Kepler-ligningen for hvert tidspunkt,
 med stabile Stumpff-funksjoner ved parabelgrensen. Den bruker ikke
 Euler-integrasjon og akkumulerer derfor ikke integrasjonsdrift.
 Flyttall og den numeriske rotløsningen gir likevel endelig presisjon.
 Ved radielt innfall stopper modellen ved den analytiske kollisjonstiden:
-punktmassepotensialet er singulært ved r = 0.
+punktmassepotensialet er singulært ved $r=0$.
 
 Legemene er punktmasser. Markørene angir identitet og omtrentlig
 masseforhold, ikke fysiske radier. Ingen tidevann, andre legemer,
