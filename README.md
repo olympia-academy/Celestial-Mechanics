@@ -12,9 +12,13 @@ and initial conditions to explore circles, ellipses, parabolas and hyperbolas.
 The app uses no online services, external fonts or npm dependencies.
 
 The project was developed by Dag-Vidar Krogstad Bauer in collaboration with
-**Codex from OpenAI**. The source code is publicly available in this repository.
+**Codex from OpenAI**. The source code is available under the [MIT license](LICENSE).
 
-**[Open the simulator](https://dagvidb.github.io/Celestial-Mechanics/)**
+**[Open the simulator in English](https://dagvidb.github.io/Celestial-Mechanics/?lang=en)**
+
+The app is available in English and Norwegian Bokmål. The language selector
+changes the interface without restarting the orbit. Links from the Norwegian
+README open the app in Norwegian; English remains the default language.
 
 ## Open the app
 
@@ -30,6 +34,10 @@ It needs no installation, server or internet connection, and is designed
 for modern browsers on Windows, macOS and Linux. GitHub's normal file view
 shows the source code; use the simulator link or download the file to run it.
 
+For a copy that starts in Norwegian, download
+[output/himmelmekanikk.nb.html](output/himmelmekanikk.nb.html).
+Both files include both languages and work without internet access.
+
 ## Development
 
 Install Node.js 20 or later to build the app and run the tests.
@@ -37,12 +45,13 @@ Neither the app nor the physics tests require `npm install`.
 
 ```sh
 npm start       # Local development server at http://127.0.0.1:4173
-npm test        # Physics tests
-npm run build   # Update output/himmelmekanikk.html after source changes
+npm test        # Physics and local-server tests
+npm run build   # Update both portable HTML files after source changes
 ```
 
 The development server listens only on the local machine. GitHub Pages
-serves `index.html` with its JavaScript and CSS files.
+serves `index.html` with its JavaScript and CSS files. Use `?lang=en` or
+`?lang=nb` to link directly to a language.
 
 ## Controls
 
@@ -237,10 +246,11 @@ Kepler solver without Stumpff series”, MNRAS 453 (2015), 3015–3023,
 https://doi.org/10.1093/mnras/stv1862. This implementation uses Stumpff
 functions with a series near zero and a safeguarded Newton/bisection method.
 
-`npm test` runs the physics tests using Node's built-in test runner.
+`npm test` runs the physics and local-server tests using Node's built-in test runner.
 The tests cover energy, angular momentum, the A-vector, complete
 revolutions, Barker's solution for a parabola, hyperbolas, mass ratios,
-radial collisions and the extended control range at long elapsed times.
+radial collisions, nearly radial ellipse plotting and the extended control
+range at long elapsed times. Server tests cover resource types and invalid URLs.
 
 ### Optional browser tests
 
@@ -248,7 +258,7 @@ The interface tests use Playwright with an isolated browser profile.
 Install the test tool and Chromium if you want to run them:
 
 ```sh
-npm install --no-save --package-lock=false playwright
+npm ci
 npx playwright install chromium
 npm run build
 npm run test:ui
@@ -257,15 +267,22 @@ npm run test:ui
 You can instead set the `PLAYWRIGHT_PATH` environment variable to an
 existing Playwright installation, and `PLAYWRIGHT_CHANNEL` to `msedge`
 or `chrome` to use an installed browser. The tests check orbit types,
-controls, mobile viewport widths and the standalone HTML file, among
+controls, mobile text layout, language switching and both standalone HTML files, among
 other things. Screenshots are saved in `output/` and excluded from Git.
+
+GitHub Actions runs these checks on pushes and pull requests, and verifies
+that the committed portable files match a fresh build. Playwright is a pinned
+development dependency; the app itself has no runtime dependencies.
 
 ## Files
 
 - physics.js: independent calculation engine.
 - app.js: controls, rendering and animation.
+- i18n.js: shared English and Norwegian interface text.
 - index.html and styles.css: user interface.
-- physics.test.cjs and ui-test.cjs: verification.
-- build.cjs: bundles the app into a single HTML file.
+- physics.test.cjs, server.test.cjs and ui-test.cjs: verification.
+- build.cjs: bundles the app into two independently usable HTML editions.
 - server.cjs: optional local development server.
-- output/himmelmekanikk.html: portable app.
+- output/himmelmekanikk.html: portable app, English by default.
+- output/himmelmekanikk.nb.html: portable app, Norwegian by default.
+- LICENSE: MIT license.

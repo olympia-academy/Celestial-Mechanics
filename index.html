@@ -7,6 +7,7 @@
   <title>Celestial Mechanics · A two-body laboratory</title>
   <link rel="stylesheet" href="styles.css">
   <script defer src="physics.js"></script>
+  <script defer src="i18n.js"></script>
   <script defer src="app.js"></script>
 </head>
 <body>
@@ -14,122 +15,125 @@
     <header class="page-header">
       <div class="brand">
         <span class="brand-mark" aria-hidden="true">◌</span>
-        <div><p class="eyebrow">A TWO-BODY LABORATORY</p><h1>Celestial Mechanics</h1></div>
+        <div><p class="eyebrow" data-i18n="eyebrow">A TWO-BODY LABORATORY</p><h1 data-i18n="title">Celestial Mechanics</h1></div>
       </div>
-      <p class="header-description">Explore the motion of two gravitating bodies.</p>
+      <div class="header-tools">
+        <p class="header-description" data-i18n="intro">Explore the motion of two gravitating bodies.</p>
+        <label class="language-picker" for="language-select"><span data-i18n="language">Language</span><select id="language-select"><option value="en" lang="en">English</option><option value="nb" lang="nb">Norsk</option></select></label>
+      </div>
     </header>
 
     <main class="workspace">
-      <aside class="controls" aria-label="Initial conditions and view settings">
+      <aside class="controls" aria-label="Initial conditions and view settings" data-i18n-aria-label="controlsLabel">
         <section class="control-section presets-section">
-          <h2>Start with an orbit</h2>
-          <div class="preset-grid" aria-label="Orbit presets">
-            <button type="button" data-preset="circle" aria-pressed="false"><span class="preset-shape circle-shape" aria-hidden="true"></span>Circle</button>
-            <button type="button" data-preset="ellipse" aria-pressed="true"><span class="preset-shape ellipse-shape" aria-hidden="true"></span>Ellipse</button>
-            <button type="button" data-preset="parabola" aria-pressed="false"><span class="preset-shape parabola-shape" aria-hidden="true"></span>Parabola</button>
-            <button type="button" data-preset="hyperbola" aria-pressed="false"><span class="preset-shape hyperbola-shape" aria-hidden="true"></span>Hyperbola</button>
-            <button type="button" data-preset="binary" aria-pressed="false" class="binary-preset"><span class="binary-symbol" aria-hidden="true">● · ●</span>Two equal masses</button>
+          <h2 data-i18n="startOrbit">Start with an orbit</h2>
+          <div class="preset-grid" aria-label="Orbit presets" data-i18n-aria-label="presetsLabel">
+            <button type="button" data-preset="circle" aria-pressed="false"><span class="preset-shape circle-shape" aria-hidden="true"></span><span data-i18n="circle">Circle</span></button>
+            <button type="button" data-preset="ellipse" aria-pressed="true"><span class="preset-shape ellipse-shape" aria-hidden="true"></span><span data-i18n="ellipse">Ellipse</span></button>
+            <button type="button" data-preset="parabola" aria-pressed="false"><span class="preset-shape parabola-shape" aria-hidden="true"></span><span data-i18n="parabola">Parabola</span></button>
+            <button type="button" data-preset="hyperbola" aria-pressed="false"><span class="preset-shape hyperbola-shape" aria-hidden="true"></span><span data-i18n="hyperbola">Hyperbola</span></button>
+            <button type="button" data-preset="binary" aria-pressed="false" class="binary-preset"><span class="binary-symbol" aria-hidden="true">● · ●</span><span data-i18n="binary">Two equal masses</span></button>
           </div>
         </section>
 
         <section class="control-section initial-conditions">
-          <div class="section-heading"><h2>Initial conditions</h2><span class="small-note">Changes reset</span></div>
+          <div class="section-heading"><h2 data-i18n="initialConditions">Initial conditions</h2><span class="small-note" data-i18n="changesReset">Changes reset</span></div>
           <div class="field mass-field">
-            <div class="field-heading"><label for="mass-ratio">Mass ratio <span class="math">m / M</span></label><output id="mass-ratio-value" for="mass-ratio">0.05</output></div>
+            <div class="field-heading"><label for="mass-ratio" data-i18n="massRatio">Mass ratio <span class="math">m / M</span></label><output id="mass-ratio-value" for="mass-ratio">0.05</output></div>
             <input id="mass-ratio" type="range" min="0" max="2" step="0.001" value="0.05" aria-describedby="mass-description">
-            <div class="range-endpoints" aria-hidden="true"><span>Test particle</span><span>2 × M</span></div>
-            <div class="precise-value"><label for="mass-ratio-number">Exact value</label><input id="mass-ratio-number" type="number" min="0" max="5" step="0.001" value="0.05" inputmode="decimal"><span>× M</span></div>
+            <div class="range-endpoints" aria-hidden="true"><span data-i18n="testParticle">Test particle</span><span>2 × M</span></div>
+            <div class="precise-value"><label for="mass-ratio-number" data-i18n="exactValue">Exact value</label><input id="mass-ratio-number" type="number" min="0" max="5" step="any" value="0.05" inputmode="decimal"><span>× M</span></div>
             <p class="field-description" id="mass-description">Both bodies move around their common centre of mass.</p>
           </div>
 
           <div class="field">
-            <div class="field-heading"><label for="distance">Initial separation <span class="math">r₀</span></label><output id="distance-value" for="distance">1.00 R</output></div>
+            <div class="field-heading"><label for="distance" data-i18n="distance">Initial separation <span class="math">r₀</span></label><output id="distance-value" for="distance">1.00 R</output></div>
             <input id="distance" type="range" min="0.25" max="4" step="0.05" value="1">
           </div>
 
           <div class="field">
-            <div class="field-heading"><label for="speed">Relative initial speed <span class="math">v₀</span></label><output id="speed-value" for="speed">1.25</output></div>
+            <div class="field-heading"><label for="speed" data-i18n="speed">Relative initial speed <span class="math">v₀</span></label><output id="speed-value" for="speed">1.25</output></div>
             <input id="speed" type="range" min="0" max="4" step="0.01" value="1.25" aria-describedby="speed-reference">
-            <div class="precise-value"><label for="speed-number">Exact value</label><input id="speed-number" type="number" min="0" max="10" step="0.01" value="1.25" inputmode="decimal"><span>√(GM/R)</span></div>
-            <div class="shortcut-row"><button type="button" id="circular-button">Circular speed</button><button type="button" id="escape-button">Escape speed</button></div>
+            <div class="precise-value"><label for="speed-number" data-i18n="exactValue">Exact value</label><input id="speed-number" type="number" min="0" max="10" step="any" value="1.25" inputmode="decimal"><span>√(GM/R)</span></div>
+            <div class="shortcut-row"><button type="button" id="circular-button" data-i18n="circularSpeed">Circular speed</button><button type="button" id="escape-button" data-i18n="escapeSpeed">Escape speed</button></div>
             <p class="field-description" id="speed-reference">Speed is measured relative to the other body.</p>
           </div>
 
           <div class="field">
-            <div class="field-heading"><label for="angle">Angle from the tangent</label><output id="angle-value" for="angle">0°</output></div>
+            <div class="field-heading"><label for="angle" data-i18n="angle">Angle from the tangent</label><output id="angle-value" for="angle">0°</output></div>
             <input id="angle" type="range" min="-90" max="90" step="1" value="0">
-            <div class="range-endpoints" aria-hidden="true"><span>−90° inward</span><span>0° tangent</span><span>+90° outward</span></div>
+            <div class="range-endpoints" aria-hidden="true"><span data-i18n="inward">−90° inward</span><span data-i18n="tangent">0° tangent</span><span data-i18n="outward">+90° outward</span></div>
           </div>
         </section>
 
         <section class="control-section view-controls">
-          <h2>View</h2>
-          <label class="select-label" for="reference-frame">Reference frame</label>
+          <h2 data-i18n="view">View</h2>
+          <label class="select-label" for="reference-frame" data-i18n="referenceFrame">Reference frame</label>
           <select id="reference-frame">
-            <option value="barycentric">Centre of mass</option>
-            <option value="primary">Follow the central body M</option>
-            <option value="relative">Relative orbit</option>
+            <option value="barycentric" data-i18n="barycentric">Centre of mass</option>
+            <option value="primary" data-i18n="primary">Follow the central body M</option>
+            <option value="relative" data-i18n="relative">Relative orbit</option>
           </select>
           <div class="checkbox-list">
-            <label><input id="show-trails" type="checkbox" checked><span>Show orbital trails</span></label>
-            <label><input id="show-vectors" type="checkbox"><span>Show velocity and A-vectors</span></label>
-            <label><input id="show-apsides" type="checkbox"><span>Show nearest and farthest points</span></label>
+            <label><input id="show-trails" type="checkbox" checked><span data-i18n="showTrails">Show orbital trails</span></label>
+            <label><input id="show-vectors" type="checkbox"><span data-i18n="showVectors">Show velocity and A-vectors</span></label>
+            <label><input id="show-apsides" type="checkbox"><span data-i18n="showApsides">Show nearest and farthest points</span></label>
           </div>
           <div class="field zoom-field">
-            <div class="field-heading"><label for="zoom">Zoom</label><output id="zoom-value" for="zoom">1.00×</output></div>
+            <div class="field-heading"><label for="zoom" data-i18n="zoom">Zoom</label><output id="zoom-value" for="zoom">1.00×</output></div>
             <input id="zoom" type="range" min="0.4" max="3" step="0.05" value="1">
           </div>
         </section>
       </aside>
 
       <div class="simulation-column">
-        <section class="simulation" aria-label="Animated planetary orbit">
+        <section class="simulation" aria-label="Animated planetary orbit" data-i18n-aria-label="simulationLabel">
           <div class="simulation-heading">
             <div class="orbit-status"><span class="status-dot" aria-hidden="true"></span><strong id="orbit-type">Ellipse</strong><span id="orbit-description">A bound orbit</span></div>
-            <div class="time-readout"><span>Time</span><output id="time-display">0.00</output></div>
+            <div class="time-readout"><span data-i18n="time">Time</span><output id="time-display">0.00</output></div>
           </div>
           <div id="scene" class="scene">
-            <canvas id="orbit-canvas" role="img" aria-label="Animation of two bodies moving under their mutual gravity. The orbit type and properties are shown below.">Your browser must support canvas to display the animation. Orbital properties are listed below.</canvas>
-            <div class="scene-legend" aria-label="Legend"><span><i class="legend-dot primary-dot"></i>Central body M</span><span><i class="legend-dot secondary-dot"></i>Body m</span><span><i class="legend-center">+</i>Centre of mass</span></div>
+            <canvas id="orbit-canvas" role="img" aria-label="Animation of two bodies moving under their mutual gravity. The orbit type and properties are shown below." data-i18n="canvasFallback">Your browser must support canvas to display the animation. Orbital properties are listed below.</canvas>
+            <div class="scene-legend" aria-label="Legend" data-i18n-aria-label="legend"><span><i class="legend-dot primary-dot"></i><span data-i18n="centralBody">Central body M</span></span><span><i class="legend-dot secondary-dot"></i><span data-i18n="body">Body m</span></span><span><i class="legend-center">+</i><span data-i18n="barycentric">Centre of mass</span></span></div>
             <p id="error-message" class="error-message" role="alert" hidden></p>
           </div>
           <div class="playback-bar">
-            <div class="playback-actions"><button type="button" id="play-button" class="play-button" aria-pressed="true">Pause</button><button type="button" id="reset-button">Reset</button><button type="button" id="fit-button">Fit orbit</button></div>
-            <div class="time-scale-field"><label for="time-scale">Speed <output id="time-scale-value" for="time-scale">1.0×</output></label><input id="time-scale" type="range" min="0.1" max="4" step="0.1" value="1"></div>
+            <div class="playback-actions"><button type="button" id="play-button" class="play-button" aria-pressed="true">Pause</button><button type="button" id="reset-button" data-i18n="reset">Reset</button><button type="button" id="fit-button" data-i18n="fit">Fit orbit</button></div>
+            <div class="time-scale-field"><label for="time-scale"><span data-i18n="playbackSpeed">Speed</span> <output id="time-scale-value" for="time-scale">1.0×</output></label><input id="time-scale" type="range" min="0.1" max="4" step="0.1" value="1"></div>
           </div>
         </section>
 
-        <section class="metrics" aria-label="Orbital properties">
-          <div class="metric"><span>Eccentricity <span class="math">e</span></span><output id="eccentricity-value">—</output><small>0: circle · 1: parabola</small></div>
-          <div class="metric"><span>Specific energy <span class="math">ε</span></span><output id="energy-value">—</output><small>Negative energy gives a bound orbit</small></div>
-          <div class="metric"><span>Orbital period <span class="math">T</span></span><output id="period-value">—</output><small>In the model's time unit</small></div>
+        <section class="metrics" aria-label="Orbital properties" data-i18n-aria-label="propertiesLabel">
+          <div class="metric"><span data-i18n="eccentricity">Eccentricity <span class="math">e</span></span><output id="eccentricity-value">—</output><small data-i18n="eccentricityHint">0: circle · 1: parabola</small></div>
+          <div class="metric"><span data-i18n="energy">Specific energy <span class="math">ε</span></span><output id="energy-value">—</output><small data-i18n="energyHint">Negative energy gives a bound orbit</small></div>
+          <div class="metric"><span data-i18n="period">Orbital period <span class="math">T</span></span><output id="period-value">—</output><small data-i18n="periodHint">In the model's time unit</small></div>
         </section>
 
-        <section class="orbit-details" aria-label="More orbital properties">
+        <section class="orbit-details" aria-label="More orbital properties" data-i18n-aria-label="morePropertiesLabel">
           <dl class="detail-values">
-            <div><dt>Minimum separation</dt><dd id="periapsis-value">—</dd></div>
-            <div><dt>Maximum separation</dt><dd id="apoapsis-value">—</dd></div>
-            <div><dt>Angular momentum <span class="math">h</span></dt><dd id="angular-momentum-value">—</dd></div>
-            <div><dt>Initial circular speed</dt><dd id="circular-speed-value">—</dd></div>
-            <div><dt>Initial escape speed</dt><dd id="escape-speed-value">—</dd></div>
+            <div><dt data-i18n="minDistance">Minimum separation</dt><dd id="periapsis-value">—</dd></div>
+            <div><dt data-i18n="maxDistance">Maximum separation</dt><dd id="apoapsis-value">—</dd></div>
+            <div><dt data-i18n="momentum">Angular momentum <span class="math">h</span></dt><dd id="angular-momentum-value">—</dd></div>
+            <div><dt data-i18n="initialCircular">Initial circular speed</dt><dd id="circular-speed-value">—</dd></div>
+            <div><dt data-i18n="initialEscape">Initial escape speed</dt><dd id="escape-speed-value">—</dd></div>
           </dl>
           <p id="a-vector-description" class="vector-note">The A-vector points towards periapsis, and its magnitude determines the eccentricity of the relative orbit.</p>
         </section>
 
         <details class="model-notes">
-          <summary>Model and units</summary>
+          <summary data-i18n="model">Model and units</summary>
           <div class="model-notes-content">
-            <p>The simulation uses Newtonian gravity for two point masses. The mass ratio is <span class="math">q = m/M</span>. When the masses are comparable, both move noticeably around their common centre of mass. The value <span class="math">q = 0</span> is the test-particle limit.</p>
-            <p>The units are chosen so that <span class="math">G = M = R = 1</span>. Separations are measured in <span class="math">R</span>, speed in <span class="math">√(GM/R)</span> and time in <span class="math">√(R³/GM)</span>. In these units, the gravitational parameter for relative motion is <span class="math">μ = 1 + q</span>, corresponding to <span class="math">G(M + m)</span>.</p>
-            <p>The initial speed is the speed of <span class="math">m</span> relative to <span class="math">M</span>. Energy and angular momentum are given per unit of reduced mass, in units of <span class="math">GM/R</span> and <span class="math">√(GMR)</span>. Following the central body changes the view; the calculation still includes both bodies.</p>
-            <p>The markers are sized for visibility and are not to scale. The model has no physical surfaces or collision radii. Changing an initial condition restarts the simulation with the new value.</p>
-            <p>The dashed line shows the predicted orbit, while the solid trail shows the motion so far. Open and very elongated orbits may extend beyond the view. Select “Fit orbit” to include the bodies' current positions.</p>
+            <p data-i18n="modelGravity">The simulation uses Newtonian gravity for two point masses. The mass ratio is <span class="math">q = m/M</span>. When the masses are comparable, both move noticeably around their common centre of mass. The value <span class="math">q = 0</span> is the test-particle limit.</p>
+            <p data-i18n="modelUnits">The units are chosen so that <span class="math">G = M = R = 1</span>. Separations are measured in <span class="math">R</span>, speed in <span class="math">√(GM/R)</span> and time in <span class="math">√(R³/GM)</span>. In these units, the gravitational parameter for relative motion is <span class="math">μ = 1 + q</span>, corresponding to <span class="math">G(M + m)</span>.</p>
+            <p data-i18n="modelRelative">The initial speed is the speed of <span class="math">m</span> relative to <span class="math">M</span>. Energy and angular momentum are given per unit of reduced mass, in units of <span class="math">GM/R</span> and <span class="math">√(GMR)</span>. Following the central body changes the view; the calculation still includes both bodies.</p>
+            <p data-i18n="modelMarkers">The markers are sized for visibility and are not to scale. The model has no physical surfaces or collision radii. Changing an initial condition restarts the simulation with the new value.</p>
+            <p data-i18n="modelPath">The dashed line shows the predicted orbit, while the solid trail shows the motion so far. Open and very elongated orbits may extend beyond the view. Select “Fit orbit” to include the bodies' current positions.</p>
           </div>
         </details>
       </div>
     </main>
     <p id="live-status" class="sr-only" aria-live="polite" aria-atomic="true"></p>
-    <footer class="page-footer"><span>Newtonian gravity · Two bodies · One orbital plane</span><span>From Kepler's planetary orbits to the hydrogen atom</span></footer>
+    <footer class="page-footer"><span data-i18n="footerPhysics">Newtonian gravity · Two bodies · One orbital plane</span><span data-i18n="footerHistory">From Kepler's planetary orbits to the hydrogen atom</span></footer>
   </div>
 </body>
 </html>

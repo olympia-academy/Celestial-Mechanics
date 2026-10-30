@@ -170,10 +170,21 @@
       if (extent < periapsis) return [];
       const axis = e > 1e-12 ? [eVec[0] / e, eVec[1] / e] : [1, 0];
       const side = [-axis[1], axis[0]];
-      let limit = Math.PI;
-      if (energy >= 0 || (apoapsis && apoapsis > extent)) {
-        limit = Math.acos(Math.max(-1, Math.min(1, (p / extent - 1) / e)));
+      if (energy < 0) {
+        // Eccentric anomaly avoids dividing by 1 - e at apoapsis. In a
+        // nearly radial ellipse e can round to 1 while both apsides remain
+        // well determined. Half angles also avoid cancellation near periapsis.
+        const limit = extent < apoapsis ? 2 * Math.asin(Math.sqrt(
+          Math.max(0, Math.min(1, (extent - periapsis) / (apoapsis - periapsis))))) : Math.PI;
+        const semiMinor = Math.sqrt(a * p);
+        return Array.from({length: count + 1}, (_, i) => {
+          const anomaly = -limit + 2 * limit * i / count;
+          const x = periapsis * Math.cos(anomaly / 2) ** 2 - apoapsis * Math.sin(anomaly / 2) ** 2;
+          const y = semiMinor * Math.sin(anomaly);
+          return [axis[0] * x + side[0] * y, axis[1] * x + side[1] * y];
+        });
       }
+      const limit = Math.acos(Math.max(-1, Math.min(1, (p / extent - 1) / e)));
       const result = [];
       for (let i = 0; i <= count; i++) {
         const phi = -limit + 2 * limit * i / count;

@@ -3,7 +3,8 @@
   const $ = function (id) { return document.getElementById(id); };
   const canvas = $('orbit-canvas');
   const ctx = canvas.getContext('2d');
-  const names = {circle: 'Circle', ellipse: 'Ellipse', parabola: 'Parabola', hyperbola: 'Hyperbola', radial: 'Radial motion'};
+  const i18n = window.OrbitI18n;
+  const t = i18n.t;
   const defaults = {massRatio: 0.05, r0: 1, speed: 1.2 * Math.sqrt(1.05), angleDeg: 0};
   const clamp = function (v, lo, hi) { return Math.max(lo, Math.min(hi, v)); };
   const finite = function (v) { return typeof v === 'number' && Number.isFinite(v); };
@@ -14,7 +15,7 @@
     timeScale: 1, zoom: 1, frame: 'barycentric', showTrails: true, showVectors: false,
     showApsides: false, preset: 'ellipse', path: [], trail: [], current: null,
     camera: {x: 0, y: 0, span: 4}, width: 800, height: 550, scale: 100,
-    lastStamp: null, lastReadout: 0, dirty: true
+    lastStamp: null, lastReadout: 0, dirty: true, messageKey: ''
   };
   try {
     const saved = JSON.parse(localStorage.getItem(storageKey));
@@ -45,17 +46,18 @@
     if (!Number.isFinite(n)) return '∞';
     if (Math.abs(n) < 1e-12) n = 0;
     if (Math.abs(n) >= 100000 || (Math.abs(n) > 0 && Math.abs(n) < 0.0001)) {
-      return n.toExponential(2).replace('e+', ' · 10^').replace('e-', ' · 10^−');
+      return n.toExponential(2).replace('.', i18n.language === 'nb' ? ',' : '.').replace('e+', ' · 10^').replace('e-', ' · 10^−');
     }
-    return new Intl.NumberFormat('en-GB', {useGrouping: false, maximumFractionDigits: digits === undefined ? 3 : digits}).format(n);
+    return new Intl.NumberFormat(i18n.language === 'nb' ? 'nb-NO' : 'en-GB', {useGrouping: false, maximumFractionDigits: digits === undefined ? 3 : digits}).format(n);
   }
   function announce(text) { $('live-status').textContent = text; }
-  function message(text) {
-    $('error-message').textContent = text || '';
-    $('error-message').hidden = !text;
+  function message(key) {
+    state.messageKey = key;
+    $('error-message').textContent = key ? t(key) : '';
+    $('error-message').hidden = !key;
   }
   function updatePlayback() {
-    $('play-button').textContent = state.running ? 'Pause' : 'Play';
+    $('play-button').textContent = t(state.running ? 'pause' : 'play');
     $('play-button').setAttribute('aria-pressed', String(state.running));
   }
   function pointsForFrame(r) {
@@ -85,7 +87,7 @@
     };
     state.zoom = 1;
     $('zoom').value = '1';
-    $('zoom-value').textContent = '1.00×';
+    $('zoom-value').textContent = fmt(1, 2) + '×';
     state.dirty = true;
   }
 
@@ -109,37 +111,33 @@
     $('show-apsides').checked = state.showApsides;
     $('time-scale').value = state.timeScale;
     $('time-scale-value').textContent = fmt(state.timeScale, 1) + '×';
-    $('orbit-type').textContent = names[o.type] || o.type;
+    $('orbit-type').textContent = t(o.type);
     const descriptions = {
-      circle: 'Constant separation', ellipse: 'Bound motion',
-      parabola: 'At the escape threshold', hyperbola: 'Unbound motion',
-      radial: o.collisionTime !== null && finite(o.collisionTime) ? 'Motion ending in a collision' : 'Motion along a straight line'
+      circle: 'circleDescription', ellipse: 'ellipseDescription',
+      parabola: 'parabolaDescription', hyperbola: 'hyperbolaDescription',
+      radial: o.collisionTime !== null && finite(o.collisionTime) ? 'collisionDescription' : 'radialDescription'
     };
-    $('orbit-description').textContent = descriptions[o.type];
+    $('orbit-description').textContent = t(descriptions[o.type]);
     $('eccentricity-value').textContent = fmt(o.e, Math.abs(o.e - 1) < 0.001 ? 8 : 4);
     $('energy-value').textContent = fmt(o.energy, 5);
-    $('period-value').textContent = o.period ? fmt(o.period, 3) : 'None';
+    $('period-value').textContent = o.period ? fmt(o.period, 3) : t('none');
     $('periapsis-value').textContent = fmt(o.periapsis, 4) + ' R';
-    $('apoapsis-value').textContent = o.apoapsis === null ? 'Unbound' : fmt(o.apoapsis, 4) + ' R';
+    $('apoapsis-value').textContent = o.apoapsis === null ? t('unbound') : fmt(o.apoapsis, 4) + ' R';
     $('angular-momentum-value').textContent = fmt(o.h, 4);
     $('circular-speed-value').textContent = fmt(o.circularSpeed, 5);
     $('escape-speed-value').textContent = fmt(o.escapeSpeed, 5);
-    $('speed-reference').textContent = fmt(p.speed / o.circularSpeed, 3) + ' × local circular speed. Speed stays fixed when the mass changes.';
+    $('speed-reference').textContent = t('speedReference', {ratio: fmt(p.speed / o.circularSpeed, 3)});
     $('mass-description').textContent = p.massRatio === 0 ?
-      'Test-particle limit: M remains at the centre of mass while the particle moves in its gravitational field.' :
-      'M is ' + fmt(p.massRatio / (1 + p.massRatio) * 100, 2) + '% of the separation from the centre of mass. Both bodies move.';
+      t('massTest') : t('massDescription', {percent: fmt(p.massRatio / (1 + p.massRatio) * 100, 2)});
     $('a-vector-description').textContent = o.type === 'radial' ?
-      'Angular momentum is zero. Radial motion is a degenerate case, even though e = 1.' :
-      o.type === 'circle' ? 'A = 0: A circle has no unique periapsis direction.' :
-      'A/μ = e = ' + fmt(o.e, 5) + '. A points towards periapsis of the relative orbit. Arrow lengths are scaled to fit the view.';
+      t('aRadial') : o.type === 'circle' ? t('aCircle') : t('aDescription', {e: fmt(o.e, 5)});
     document.querySelectorAll('[data-preset]').forEach(function (button) {
       button.setAttribute('aria-pressed', String(button.dataset.preset === state.preset));
     });
     const legend = document.querySelector('.scene-legend');
     legend.children[0].hidden = state.frame === 'relative';
     legend.children[2].hidden = state.frame === 'relative';
-    canvas.setAttribute('aria-label', names[o.type] + '. Mass ratio ' + fmt(p.massRatio) +
-      ', eccentricity ' + fmt(o.e, 5) + ', energy ' + fmt(o.energy, 5) + '. Use the controls to adjust the initial conditions.');
+    canvas.setAttribute('aria-label', t('canvasDescription', {orbit: t(o.type), q: fmt(p.massRatio), e: fmt(o.e, 5), energy: fmt(o.energy, 5)}));
     updatePlayback();
   }
 
@@ -153,12 +151,13 @@
       message('');
       fit(false);
       updateControls();
-      $('time-display').textContent = '0.00';
-      if (announceChange) announce(names[orbit.type] + '. Eccentricity ' + fmt(orbit.e, 5) + '.');
+      $('time-display').textContent = fmt(0, 2);
+      if (announceChange) announce(t('changed', {orbit: t(orbit.type), e: fmt(orbit.e, 5)}));
       save();
     } catch (err) {
       state.running = false; updatePlayback();
-      message('Could not calculate the initial conditions: ' + err.message);
+      message('initialError');
+      console.warn(err);
     }
   }
   function changeParam(key, value) {
@@ -204,9 +203,23 @@
   }
   $('play-button').addEventListener('click', togglePlay);
   $('reset-button').addEventListener('click', function () {
-    state.running = false; rebuild(false); announce('Returned to the initial state. Playback is paused.');
+    state.running = false; rebuild(false); announce(t('resetAnnouncement'));
   });
-  $('fit-button').addEventListener('click', function () { fit(true); announce('The view now includes the orbit and the current positions of both bodies.'); });
+  $('fit-button').addEventListener('click', function () { fit(true); announce(t('fitAnnouncement')); });
+  $('language-select').addEventListener('change', function (event) {
+    i18n.apply(event.target.value);
+    updateControls();
+    message(state.messageKey);
+    $('time-display').textContent = fmt(state.time, 2);
+    $('zoom-value').textContent = fmt(state.zoom, 2) + '×';
+    announce(t('changed', {orbit: t(state.orbit.type), e: fmt(state.orbit.e, 5)}));
+    state.dirty = true;
+    try {
+      const url = new URL(window.location.href);
+      url.searchParams.set('lang', i18n.language);
+      window.history.replaceState(null, '', url);
+    } catch (_) { /* Some browsers restrict history updates for local files. */ }
+  });
   $('reference-frame').addEventListener('change', function (event) {
     state.frame = event.target.value; fit(true); updateControls(); save();
   });
@@ -322,18 +335,21 @@
       function apsis(r, name, sign) {
         if (!finite(r)) return;
         const p = [c2 * u[0] * r * sign, c2 * u[1] * r * sign], xy = screen(p);
-        if (xy[0] < 30 || xy[0] > state.width - 90 || xy[1] < 70 || xy[1] > state.height - 55) return;
+        if (xy[0] < 8 || xy[0] > state.width - 8 || xy[1] < 50 || xy[1] > state.height - 38) return;
         ctx.strokeStyle = '#a3b6bf'; ctx.lineWidth = 1;
         ctx.beginPath(); ctx.arc(xy[0], xy[1], 4, 0, Math.PI * 2); ctx.stroke();
         ctx.fillStyle = '#b7c5ce'; ctx.font = '11px system-ui'; ctx.textAlign = 'left';
-        ctx.fillText(state.width < 500 ? (sign === 1 ? 'Peri' : 'Apo') : name, xy[0] + 8, xy[1] + 22);
+        const label = state.width < 500 ? t(sign === 1 ? 'periShort' : 'apoShort') : name;
+        const labelWidth = ctx.measureText(label).width;
+        const labelX = xy[0] + 8 + labelWidth <= state.width - 8 ? xy[0] + 8 : xy[0] - 8 - labelWidth;
+        ctx.fillText(label, Math.max(8, labelX), xy[1] + 22 <= state.height - 38 ? xy[1] + 22 : xy[1] - 10);
       }
-      apsis(state.orbit.periapsis, 'Periapsis', 1);
-      apsis(state.orbit.apoapsis, 'Apoapsis', -1);
+      apsis(state.orbit.periapsis, t('periapsis'), 1);
+      apsis(state.orbit.apoapsis, t('apoapsis'), -1);
     }
     const r = state.current.r, positions = pointsForFrame(r);
-    if (state.frame === 'barycentric') cross([0, 0], q > 0.03 ? 'Centre of mass' : '');
-    else if (state.frame === 'primary') cross([q / (1 + q) * r[0], q / (1 + q) * r[1]], 'Centre of mass');
+    if (state.frame === 'barycentric') cross([0, 0], q > 0.03 ? t('barycentric') : '');
+    else if (state.frame === 'primary') cross([q / (1 + q) * r[0], q / (1 + q) * r[1]], t('barycentric'));
     else cross([0, 0], 'r = 0');
     const primaryVisible = state.frame !== 'relative' ? dot(positions[0], 10, '#edbd6c', 'M') : true;
     const secondaryRadius = state.frame === 'relative' ? 5 : q === 0 ? 4 : clamp(10 * Math.cbrt(q), 4.5, 16);
@@ -346,8 +362,8 @@
     }
     ctx.restore();
     ctx.font = '11px system-ui'; ctx.fillStyle = '#9aabb7'; ctx.textAlign = 'right';
-    if (!secondaryVisible || !primaryVisible) ctx.fillText('Outside the view · select Fit orbit', state.width - 16, 58);
-    else if (state.showVectors) ctx.fillText('Arrows scaled for readability', state.width - 16, state.height - 35);
+    if (!secondaryVisible || !primaryVisible) ctx.fillText(t('outside'), state.width - 16, 58);
+    else if (state.showVectors) ctx.fillText(t('arrows'), state.width - 16, state.height - 35);
     state.dirty = false;
   }
   function resize() {
@@ -368,15 +384,15 @@
       const steps = Math.max(1, Math.ceil(elapsed * state.timeScale / 0.018));
       try {
         for (let i = 1; i <= steps; i++) {
-          const t = state.time + (target - state.time) * i / steps;
-          const result = state.orbit.sample(t);
+          const sampleTime = state.time + (target - state.time) * i / steps;
+          const result = state.orbit.sample(sampleTime);
           state.current = result;
           state.trail.push(result.r);
           if (result.collision) {
             state.running = false;
-            state.time = finite(state.orbit.collisionTime) ? state.orbit.collisionTime : t;
-            message('The point masses meet at r = 0. Newton\'s point-mass model is singular here; playback has stopped.');
-            announce('Radial collision. The simulation has stopped.'); updatePlayback();
+            state.time = finite(state.orbit.collisionTime) ? state.orbit.collisionTime : sampleTime;
+            message('collision');
+            announce(t('collisionAnnouncement')); updatePlayback();
             break;
           }
         }
@@ -384,7 +400,8 @@
         if (state.trail.length > 1500) state.trail.splice(0, state.trail.length - 1500);
       } catch (err) {
         state.running = false; updatePlayback();
-        message('Calculation stopped: ' + err.message + '. Select Reset or change the initial conditions.');
+        message('calculationError');
+        console.warn(err);
       }
       state.dirty = true;
     }

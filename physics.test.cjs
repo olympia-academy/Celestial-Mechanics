@@ -114,6 +114,36 @@ test('predicted paths satisfy the conic equation and clipping radius', () => {
   }
 });
 
+test('nearly radial ellipses retain finite paths and both apsides', () => {
+  for (const speed of [1e-5, 1e-6]) {
+    for (const angleDeg of [-89, 89]) {
+      const orbit = createOrbit({massRatio: 5, r0: .25, speed, angleDeg});
+      assert.equal(orbit.type, 'ellipse');
+      const points = orbit.path({extent: 1.5, samples: 1100});
+      assert.equal(points.length, 1101);
+      assert.ok(points.every(r => r.every(Number.isFinite)));
+      close(Math.hypot(...points[0]) / orbit.apoapsis, 1, 1e-12);
+      close(Math.hypot(...points.at(-1)) / orbit.apoapsis, 1, 1e-12);
+      close(Math.hypot(...points[550]) / orbit.periapsis, 1, 1e-12);
+      for (const r of points) assert.ok(Math.hypot(...r) <= orbit.apoapsis * (1 + 1e-12));
+    }
+  }
+});
+
+test('elliptic paths clip correctly for nearly radial and near-parabolic orbits', () => {
+  for (const speed of [1e-6, .6, Math.SQRT2 * (1 - 1e-7)]) {
+    const orbit = createOrbit({massRatio: 0, r0: 1, speed, angleDeg: 20});
+    const extent = Math.min(4, (orbit.periapsis + orbit.apoapsis) / 2);
+    const points = orbit.path({extent, samples: 100});
+    assert.equal(points.length, 101);
+    assert.ok(points.every(r => r.every(Number.isFinite)));
+    close(Math.hypot(...points[0]) / extent, 1, 1e-12);
+    close(Math.hypot(...points.at(-1)) / extent, 1, 1e-12);
+    for (const r of points) assert.ok(Math.hypot(...r) <= extent * (1 + 1e-12));
+    assert.deepEqual(orbit.path({extent: orbit.periapsis / 2}), []);
+  }
+});
+
 test('invalid physical inputs and invalid times are rejected', () => {
   for (const input of [{r0: 0}, {speed: -1}, {massRatio: -1}, {angleDeg: NaN}]) {
     assert.throws(() => createOrbit(input), RangeError);

@@ -2,11 +2,18 @@
   "name": "celestial-mechanics",
   "private": true,
   "version": "1.0.0",
+  "license": "MIT",
   "description": "An interactive simulator of Newton's two-body problem",
   "scripts": {
     "start": "node server.cjs",
-    "test": "node --test physics.test.cjs",
+    "test": "node --test physics.test.cjs server.test.cjs",
     "test:ui": "node ui-test.cjs",
     "build": "node build.cjs"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "devDependencies": {
+    "playwright": "1.62.1"
   }
 }

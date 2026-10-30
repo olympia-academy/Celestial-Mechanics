@@ -1,0 +1,40 @@
+name: Checks
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '24'
+          cache: npm
+      - name: Install test dependencies
+        run: npm ci
+      - name: Test physics and local server
+        run: npm test
+      - name: Build portable apps
+        run: npm run build
+      - name: Check committed portable apps are up to date
+        run: git diff --exit-code -- output/himmelmekanikk.html output/himmelmekanikk.nb.html
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+      - name: Test interface and offline apps
+        run: npm run test:ui
+      - name: Save screenshots on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: browser-screenshots
+          path: output/*.png
+          if-no-files-found: ignore
+          retention-days: 7

@@ -12,23 +12,29 @@ startbetingelser, og utforsk sirkelbaner, ellipser, parabler og hyperbler.
 Appen bruker ingen nettjenester, eksterne skrifter eller npm-avhengigheter.
 
 Prosjektet er utviklet av Dag-Vidar Krogstad Bauer i samarbeid med
-**Codex fra OpenAI**. Kildekoden er offentlig tilgjengelig i dette repositoryet.
+**Codex fra OpenAI**. Kildekoden er tilgjengelig under [MIT-lisensen](LICENSE).
 
-**[Åpne simulatoren](https://dagvidb.github.io/Celestial-Mechanics/)**
+**[Åpne simulatoren på norsk](https://dagvidb.github.io/Celestial-Mechanics/?lang=nb)**
+
+Appen finnes på norsk bokmål og engelsk. Lenken over åpner norsk tekst.
+Språkvelgeren endrer grensesnittet uten å starte banen på nytt.
 
 ## Åpne appen
 
 Simulatoren kan brukes via lenken over eller lastes ned for bruk uten nett:
 
-1. Åpne [output/himmelmekanikk.html](output/himmelmekanikk.html) på GitHub og velg
+1. Åpne [output/himmelmekanikk.nb.html](output/himmelmekanikk.nb.html) på GitHub og velg
    **Download raw file** i verktøylinjen over filen. Alternativt: velg
    **Code → Download ZIP** på repositoryets forside og pakk ut ZIP-filen.
-2. Åpne den nedlastede `himmelmekanikk.html` i en nettleser.
+2. Åpne den nedlastede `himmelmekanikk.nb.html` i en nettleser.
 
 Denne ene filen inneholder hele appen og kan deles videre. Den krever
 ingen installasjon, server eller nettilgang, og er laget for moderne
 nettlesere på Windows, macOS og Linux. GitHubs vanlige filvisning viser
 kildekoden; bruk simulatorlenken eller last ned filen for å kjøre appen.
+
+Denne utgaven starter på norsk. Begge språk er inkludert og virker uten nett.
+[output/himmelmekanikk.html](output/himmelmekanikk.html) starter på engelsk.
 
 ## Utvikling
 
@@ -37,12 +43,13 @@ Ingen `npm install` er nødvendig for appen eller fysikktestene.
 
 ```sh
 npm start       # Lokal utviklingsserver på http://127.0.0.1:4173
-npm test        # Fysikktester
-npm run build   # Oppdater output/himmelmekanikk.html etter kildeendringer
+npm test        # Fysikk- og lokalservertester
+npm run build   # Oppdater begge portable HTML-filer etter kildeendringer
 ```
 
 Utviklingsserveren lytter bare lokalt. GitHub Pages viser `index.html`
-med de tilhørende JavaScript- og CSS-filene.
+med de tilhørende JavaScript- og CSS-filene. Bruk `?lang=nb` eller `?lang=en`
+for å lenke direkte til ønsket språk.
 
 ## Kontroller
 
@@ -56,9 +63,8 @@ med de tilhørende JavaScript- og CSS-filene.
 Fysiske parameterendringer setter tiden tilbake til null. Farten beholdes
 når massen endres; dermed kan den nye massen endre banetype. Forhåndsvalg
 beregner farten på nytt med den gjeldende totale massen. Knappen
-«Circular speed» (sirkelhastighet) velger også tangentiell retning. Knappen
-«Escape speed» (unnslippingsfart) beholder den valgte retningen.
-Appens grensesnitt er på engelsk.
+«Sirkelhastighet» velger også tangentiell retning. Knappen
+«Unnslippingsfart» beholder den valgte retningen.
 
 ## Fysikk og enheter
 
@@ -222,7 +228,7 @@ masseforhold, ikke fysiske radier. Ingen tidevann, andre legemer,
 relativitet eller stråling er inkludert. Den stiplede kurven er den
 beregnede banen; en åpen bane fortsetter utenfor utsnittet. Når en
 svært lang ellipse klippes, vises bare den delen som passer i utsnittet.
-Velg «Fit orbit» (tilpass bane) for å inkludere legemenes nåværende posisjoner.
+Velg «Tilpass bane» for å inkludere legemenes nåværende posisjoner.
 Vektorpilenes lengder er tilpasset lesbarheten; tallverdiene står ved siden av.
 
 ## Kilde og kontroll
@@ -232,10 +238,11 @@ Kepler solver without Stumpff series», MNRAS 453 (2015), 3015–3023,
 https://doi.org/10.1093/mnras/stv1862. Implementasjonen her bruker
 Stumpff-funksjoner med serie nær null og en sikret Newton-/halveringsmetode.
 
-`npm test` kjører fysikktestene med Nodes innebygde testverktøy.
+`npm test` kjører fysikk- og lokalservertestene med Nodes innebygde testverktøy.
 Testene dekker energi, dreieimpuls, A-vektor, hele omløp, parabelens
 Barker-løsning, hyperbler, masseforhold, radielle kollisjoner og det
-utvidede kontrollområdet ved lange tider.
+utvidede kontrollområdet ved lange tider. De dekker også tegning av nesten
+radielle ellipser. Servertestene kontrollerer filtyper og ugyldige URL-er.
 
 ### Valgfrie nettlesertester
 
@@ -243,7 +250,7 @@ Grensesnitttestene bruker Playwright med en isolert nettleserprofil.
 Installer testverktøyet og Chromium hvis du vil kjøre disse:
 
 ```sh
-npm install --no-save --package-lock=false playwright
+npm ci
 npx playwright install chromium
 npm run build
 npm run test:ui
@@ -252,15 +259,22 @@ npm run test:ui
 Sett eventuelt miljøvariabelen `PLAYWRIGHT_PATH` til en eksisterende
 Playwright-installasjon, og `PLAYWRIGHT_CHANNEL` til `msedge` eller
 `chrome` for å bruke en installert nettleser. Testene kontrollerer blant
-annet banetyper, kontroller, mobilbredder og den selvstendige HTML-filen.
+annet banetyper, kontroller, tallvisning på mobil, språkbytte og begge HTML-filene.
 Skjermbilder lagres i `output/` og holdes utenfor Git.
+
+GitHub Actions kjører kontrollene ved push og pull requests, og kontrollerer
+at de versjonerte HTML-filene samsvarer med en ny bygging. Playwright har en
+låst versjon og brukes bare til utvikling; selve appen har ingen kjøretidsavhengigheter.
 
 ## Filer
 
 - physics.js: uavhengig beregningsmotor.
 - app.js: kontroller, visning og animasjon.
+- i18n.js: felles engelske og norske grensesnitttekster.
 - index.html og styles.css: brukergrensesnitt.
-- physics.test.cjs og ui-test.cjs: verifikasjon.
-- build.cjs: samler appen i én HTML-fil.
+- physics.test.cjs, server.test.cjs og ui-test.cjs: verifikasjon.
+- build.cjs: samler appen i to HTML-utgaver som kan brukes hver for seg.
 - server.cjs: valgfri lokal utviklingsserver.
-- output/himmelmekanikk.html: portabel app.
+- output/himmelmekanikk.html: portabel app med engelsk som startspråk.
+- output/himmelmekanikk.nb.html: portabel app med norsk som startspråk.
+- LICENSE: MIT-lisens.
