@@ -71,8 +71,8 @@ The simulation uses $M$ as the unit of mass and a fixed reference length
 $R$ as the unit of length. The corresponding units of speed and time are
 
 $$
-v_*=\sqrt{\frac{GM}{R}},
-\qquad t_*=\sqrt{\frac{R^3}{GM}}.
+v_{\ast}=\sqrt{\frac{GM}{R}},
+\qquad t_{\ast}=\sqrt{\frac{R^3}{GM}}.
 $$
 
 In these dimensionless units, $G=M=R=1$. Write $\mu=1+q$ for the gravitational parameter. The equation
@@ -122,7 +122,7 @@ $$
 $$
 
 Its conservation can be checked directly: Newton's acceleration gives
-$\mathbf a\times\mathbf h=\mu\,d\hat{\mathbf r}/dt$. Since
+$`\mathbf a\times\mathbf h=\mu\,d\hat{\mathbf r}/dt`$. Since
 $\dot{\mathbf h}=\mathbf 0$, the two terms in
 $d\mathbf A/dt$ cancel.
 

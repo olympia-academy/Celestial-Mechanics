@@ -70,8 +70,8 @@ Simuleringen bruker $M$ som masseenhet og en fast referanselengde $R$ som
 lengdeenhet. De tilhørende enhetene for fart og tid er
 
 $$
-v_*=\sqrt{\frac{GM}{R}},
-\qquad t_*=\sqrt{\frac{R^3}{GM}}.
+v_{\ast}=\sqrt{\frac{GM}{R}},
+\qquad t_{\ast}=\sqrt{\frac{R^3}{GM}}.
 $$
 
 I disse dimensjonsløse enhetene er $G=M=R=1$. Skriv
@@ -121,7 +121,7 @@ $$
 $$
 
 Bevaringen kan kontrolleres direkte: Newtons akselerasjon gir
-$\mathbf a\times\mathbf h=\mu\,d\hat{\mathbf r}/dt$. Siden
+$`\mathbf a\times\mathbf h=\mu\,d\hat{\mathbf r}/dt`$. Siden
 $\dot{\mathbf h}=\mathbf 0$, kansellerer de to leddene i
 $d\mathbf A/dt$ hverandre.
 
