@@ -2,6 +2,11 @@
 
 **Norsk** · [English](README.en.md)
 
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="assets/logo/himmelmekanikk-no-dark.svg">
+  <img src="assets/logo/himmelmekanikk-no.svg" width="520" alt="Himmelmekanikk: en ellipse med solen i brennpunktet og planeten på banen.">
+</picture>
+
 En interaktiv simulator for Newtons tolegemeproblem. Juster masser og
 startbetingelser, og utforsk sirkelbaner, ellipser, parabler og hyperbler.
 Appen bruker ingen nettjenester, eksterne skrifter eller npm-avhengigheter.

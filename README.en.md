@@ -2,6 +2,11 @@
 
 [Norsk](README.md) · **English**
 
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="assets/logo/celestial-mechanics-en-dark.svg">
+  <img src="assets/logo/celestial-mechanics-en.svg" width="520" alt="Celestial Mechanics: an ellipse with the sun at a focus and a planet on the orbit.">
+</picture>
+
 An interactive simulator of Newton's two-body problem. Adjust the masses
 and initial conditions to explore circles, ellipses, parabolas and hyperbolas.
 The app uses no online services, external fonts or npm dependencies.
