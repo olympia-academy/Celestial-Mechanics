@@ -2,7 +2,7 @@
   "name": "himmelmekanikk",
   "private": true,
   "version": "1.0.0",
-  "description": "Interaktivt newtonsk tolegemeproblem",
+  "description": "An interactive simulator of Newton's two-body problem",
   "scripts": {
     "start": "node server.cjs",
     "test": "node --test physics.test.cjs",

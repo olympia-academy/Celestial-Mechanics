@@ -7,7 +7,7 @@ const {pathToFileURL} = require('node:url');
 const {chromium} = require(process.env.PLAYWRIGHT_PATH || 'playwright');
 const output = path.join(__dirname, 'output');
 fs.mkdirSync(output, {recursive: true});
-function number(text) { return Number(text.replace(/[\s\u00a0]/g, '').replace(',', '.').replace('−', '-')); }
+function number(text) { return Number(text.replace(/[\s\u00a0,]/g, '').replace('−', '-')); }
 (async () => {
   process.env.PORT = '0';
   const server = require('./server.cjs');
@@ -20,10 +20,12 @@ function number(text) { return Number(text.replace(/[\s\u00a0]/g, '').replace(',
     page.on('pageerror', error => errors.push(error.message));
     await page.goto('http://127.0.0.1:' + server.address().port, {waitUntil: 'networkidle'});
     await page.waitForFunction(() => document.getElementById('eccentricity-value').textContent !== '—');
+    assert.equal(await page.locator('html').getAttribute('lang'), 'en');
+    assert.equal(await page.locator('h1').textContent(), 'Celestial Mechanics');
     await page.screenshot({path: path.join(output, 'initial.png'), fullPage: true});
     assert.equal(await page.locator('#error-message').isVisible(), false);
-    assert.equal(await page.locator('#play-button').textContent(), 'Spill av');
-    for (const [preset, name] of [['circle', 'Sirkel'], ['ellipse', 'Ellipse'], ['parabola', 'Parabel'], ['hyperbola', 'Hyperbel']]) {
+    assert.equal(await page.locator('#play-button').textContent(), 'Play');
+    for (const [preset, name] of [['circle', 'Circle'], ['ellipse', 'Ellipse'], ['parabola', 'Parabola'], ['hyperbola', 'Hyperbola']]) {
       await page.locator('[data-preset="' + preset + '"]').click();
       assert.equal(await page.locator('#orbit-type').textContent(), name);
       const e = number(await page.locator('#eccentricity-value').textContent());
@@ -43,7 +45,7 @@ function number(text) { return Number(text.replace(/[\s\u00a0]/g, '').replace(',
     assert.equal(await page.locator('#orbit-type').textContent(), 'Ellipse');
     assert.equal(number(await page.locator('#eccentricity-value').textContent()), 0.5);
     await page.locator('#circular-button').click();
-    assert.equal(await page.locator('#orbit-type').textContent(), 'Sirkel');
+    assert.equal(await page.locator('#orbit-type').textContent(), 'Circle');
     assert.ok(Math.abs(number(await page.locator('#speed-number').inputValue()) - Math.SQRT2) < 1e-8);
     await page.locator('[data-preset="binary"]').click();
     await page.locator('#show-vectors').check();
@@ -64,10 +66,10 @@ function number(text) { return Number(text.replace(/[\s\u00a0]/g, '').replace(',
     await page.screenshot({path: path.join(output, 'desktop.png'), fullPage: true});
     await page.locator('#speed-number').fill('0');
     await page.locator('#speed-number').press('Tab');
-    assert.equal(await page.locator('#orbit-type').textContent(), 'Radiell bevegelse');
+    assert.equal(await page.locator('#orbit-type').textContent(), 'Radial motion');
     await page.locator('#play-button').click();
-    await page.waitForFunction(() => document.getElementById('error-message').textContent.includes('singulær'), {timeout: 6000});
-    assert.equal(await page.locator('#play-button').textContent(), 'Spill av');
+    await page.waitForFunction(() => document.getElementById('error-message').textContent.includes('singular'), {timeout: 6000});
+    assert.equal(await page.locator('#play-button').textContent(), 'Play');
     await page.locator('[data-preset="ellipse"]').click();
     await page.setViewportSize({width: 390, height: 844});
     await page.waitForTimeout(100);
@@ -78,7 +80,8 @@ function number(text) { return Number(text.replace(/[\s\u00a0]/g, '').replace(',
     await page.goto(pathToFileURL(path.join(output, 'himmelmekanikk.html')).href, {waitUntil: 'load'});
     await page.waitForFunction(() => document.getElementById('eccentricity-value').textContent !== '—');
     await page.locator('[data-preset="parabola"]').click();
-    assert.equal(await page.locator('#orbit-type').textContent(), 'Parabel');
+    assert.equal(await page.locator('#orbit-type').textContent(), 'Parabola');
+    assert.equal(await page.locator('html').getAttribute('lang'), 'en');
     assert.equal(await page.locator('#error-message').isVisible(), false);
     assert.deepEqual(errors, []);
     console.log('UI verified: all conics, mass response, presets, playback, reference frames, radial collision, responsive layout (320/390 px), offline HTML. No browser errors.');

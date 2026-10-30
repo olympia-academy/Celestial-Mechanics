@@ -3,7 +3,7 @@
   const $ = function (id) { return document.getElementById(id); };
   const canvas = $('orbit-canvas');
   const ctx = canvas.getContext('2d');
-  const names = {circle: 'Sirkel', ellipse: 'Ellipse', parabola: 'Parabel', hyperbola: 'Hyperbel', radial: 'Radiell bevegelse'};
+  const names = {circle: 'Circle', ellipse: 'Ellipse', parabola: 'Parabola', hyperbola: 'Hyperbola', radial: 'Radial motion'};
   const defaults = {massRatio: 0.05, r0: 1, speed: 1.2 * Math.sqrt(1.05), angleDeg: 0};
   const clamp = function (v, lo, hi) { return Math.max(lo, Math.min(hi, v)); };
   const finite = function (v) { return typeof v === 'number' && Number.isFinite(v); };
@@ -45,9 +45,9 @@
     if (!Number.isFinite(n)) return '∞';
     if (Math.abs(n) < 1e-12) n = 0;
     if (Math.abs(n) >= 100000 || (Math.abs(n) > 0 && Math.abs(n) < 0.0001)) {
-      return n.toExponential(2).replace('.', ',').replace('e+', ' · 10^').replace('e-', ' · 10^−');
+      return n.toExponential(2).replace('e+', ' · 10^').replace('e-', ' · 10^−');
     }
-    return new Intl.NumberFormat('nb-NO', {maximumFractionDigits: digits === undefined ? 3 : digits}).format(n);
+    return new Intl.NumberFormat('en-GB', {useGrouping: false, maximumFractionDigits: digits === undefined ? 3 : digits}).format(n);
   }
   function announce(text) { $('live-status').textContent = text; }
   function message(text) {
@@ -55,7 +55,7 @@
     $('error-message').hidden = !text;
   }
   function updatePlayback() {
-    $('play-button').textContent = state.running ? 'Pause' : 'Spill av';
+    $('play-button').textContent = state.running ? 'Pause' : 'Play';
     $('play-button').setAttribute('aria-pressed', String(state.running));
   }
   function pointsForFrame(r) {
@@ -85,7 +85,7 @@
     };
     state.zoom = 1;
     $('zoom').value = '1';
-    $('zoom-value').textContent = '1,00×';
+    $('zoom-value').textContent = '1.00×';
     state.dirty = true;
   }
 
@@ -111,35 +111,35 @@
     $('time-scale-value').textContent = fmt(state.timeScale, 1) + '×';
     $('orbit-type').textContent = names[o.type] || o.type;
     const descriptions = {
-      circle: 'Konstant avstand', ellipse: 'Bundet bevegelse',
-      parabola: 'På unnslippingsgrensen', hyperbola: 'Ubundet bevegelse',
-      radial: o.collisionTime !== null && finite(o.collisionTime) ? 'Bevegelse mot en kollisjon' : 'Bevegelse langs en rett linje'
+      circle: 'Constant separation', ellipse: 'Bound motion',
+      parabola: 'At the escape threshold', hyperbola: 'Unbound motion',
+      radial: o.collisionTime !== null && finite(o.collisionTime) ? 'Motion ending in a collision' : 'Motion along a straight line'
     };
     $('orbit-description').textContent = descriptions[o.type];
     $('eccentricity-value').textContent = fmt(o.e, Math.abs(o.e - 1) < 0.001 ? 8 : 4);
     $('energy-value').textContent = fmt(o.energy, 5);
-    $('period-value').textContent = o.period ? fmt(o.period, 3) : 'Ingen';
+    $('period-value').textContent = o.period ? fmt(o.period, 3) : 'None';
     $('periapsis-value').textContent = fmt(o.periapsis, 4) + ' R';
-    $('apoapsis-value').textContent = o.apoapsis === null ? 'Ubundet' : fmt(o.apoapsis, 4) + ' R';
+    $('apoapsis-value').textContent = o.apoapsis === null ? 'Unbound' : fmt(o.apoapsis, 4) + ' R';
     $('angular-momentum-value').textContent = fmt(o.h, 4);
     $('circular-speed-value').textContent = fmt(o.circularSpeed, 5);
     $('escape-speed-value').textContent = fmt(o.escapeSpeed, 5);
-    $('speed-reference').textContent = fmt(p.speed / o.circularSpeed, 3) + ' × lokal sirkelhastighet. Farten beholdes når massen endres.';
+    $('speed-reference').textContent = fmt(p.speed / o.circularSpeed, 3) + ' × local circular speed. Speed stays fixed when the mass changes.';
     $('mass-description').textContent = p.massRatio === 0 ?
-      'Testpartikkelgrensen: M står i massesenteret, mens partikkelen følger gravitasjonsfeltet.' :
-      'M ligger ' + fmt(p.massRatio / (1 + p.massRatio) * 100, 2) + ' % av avstanden fra massesenteret. Begge legemer beveger seg.';
+      'Test-particle limit: M remains at the centre of mass while the particle moves in its gravitational field.' :
+      'M is ' + fmt(p.massRatio / (1 + p.massRatio) * 100, 2) + '% of the separation from the centre of mass. Both bodies move.';
     $('a-vector-description').textContent = o.type === 'radial' ?
-      'Dreieimpulsen er null. Den radielle banen er et grensetilfelle, selv om e = 1.' :
-      o.type === 'circle' ? 'A = 0: Sirkelen har ingen bestemt periapsisretning.' :
-      'A/μ = e = ' + fmt(o.e, 5) + '. A peker mot periapsis i den relative banen. Pilenes lengder er tilpasset figuren.';
+      'Angular momentum is zero. Radial motion is a degenerate case, even though e = 1.' :
+      o.type === 'circle' ? 'A = 0: A circle has no unique periapsis direction.' :
+      'A/μ = e = ' + fmt(o.e, 5) + '. A points towards periapsis of the relative orbit. Arrow lengths are scaled to fit the view.';
     document.querySelectorAll('[data-preset]').forEach(function (button) {
       button.setAttribute('aria-pressed', String(button.dataset.preset === state.preset));
     });
     const legend = document.querySelector('.scene-legend');
     legend.children[0].hidden = state.frame === 'relative';
     legend.children[2].hidden = state.frame === 'relative';
-    canvas.setAttribute('aria-label', names[o.type] + '. Masseforhold ' + fmt(p.massRatio) +
-      ', eksentrisitet ' + fmt(o.e, 5) + ', energi ' + fmt(o.energy, 5) + '. Juster startbetingelsene med kontrollene.');
+    canvas.setAttribute('aria-label', names[o.type] + '. Mass ratio ' + fmt(p.massRatio) +
+      ', eccentricity ' + fmt(o.e, 5) + ', energy ' + fmt(o.energy, 5) + '. Use the controls to adjust the initial conditions.');
     updatePlayback();
   }
 
@@ -153,12 +153,12 @@
       message('');
       fit(false);
       updateControls();
-      $('time-display').textContent = '0,00';
-      if (announceChange) announce(names[orbit.type] + '. Eksentrisitet ' + fmt(orbit.e, 5) + '.');
+      $('time-display').textContent = '0.00';
+      if (announceChange) announce(names[orbit.type] + '. Eccentricity ' + fmt(orbit.e, 5) + '.');
       save();
     } catch (err) {
       state.running = false; updatePlayback();
-      message('Startbetingelsene kunne ikke beregnes: ' + err.message);
+      message('Could not calculate the initial conditions: ' + err.message);
     }
   }
   function changeParam(key, value) {
@@ -204,9 +204,9 @@
   }
   $('play-button').addEventListener('click', togglePlay);
   $('reset-button').addEventListener('click', function () {
-    state.running = false; rebuild(false); announce('Tilbake til start. Avspillingen er satt på pause.');
+    state.running = false; rebuild(false); announce('Returned to the initial state. Playback is paused.');
   });
-  $('fit-button').addEventListener('click', function () { fit(true); announce('Visningen er tilpasset banen og legemenes nåværende posisjoner.'); });
+  $('fit-button').addEventListener('click', function () { fit(true); announce('The view now includes the orbit and the current positions of both bodies.'); });
   $('reference-frame').addEventListener('change', function (event) {
     state.frame = event.target.value; fit(true); updateControls(); save();
   });
@@ -332,8 +332,8 @@
       apsis(state.orbit.apoapsis, 'Apoapsis', -1);
     }
     const r = state.current.r, positions = pointsForFrame(r);
-    if (state.frame === 'barycentric') cross([0, 0], q > 0.03 ? 'Massesenter' : '');
-    else if (state.frame === 'primary') cross([q / (1 + q) * r[0], q / (1 + q) * r[1]], 'Massesenter');
+    if (state.frame === 'barycentric') cross([0, 0], q > 0.03 ? 'Centre of mass' : '');
+    else if (state.frame === 'primary') cross([q / (1 + q) * r[0], q / (1 + q) * r[1]], 'Centre of mass');
     else cross([0, 0], 'r = 0');
     const primaryVisible = state.frame !== 'relative' ? dot(positions[0], 10, '#edbd6c', 'M') : true;
     const secondaryRadius = state.frame === 'relative' ? 5 : q === 0 ? 4 : clamp(10 * Math.cbrt(q), 4.5, 16);
@@ -346,8 +346,8 @@
     }
     ctx.restore();
     ctx.font = '11px system-ui'; ctx.fillStyle = '#9aabb7'; ctx.textAlign = 'right';
-    if (!secondaryVisible || !primaryVisible) ctx.fillText('Utenfor utsnittet · velg Tilpass bane', state.width - 16, 58);
-    else if (state.showVectors) ctx.fillText('Piler skalert for lesbarhet', state.width - 16, state.height - 35);
+    if (!secondaryVisible || !primaryVisible) ctx.fillText('Outside the view · select Fit orbit', state.width - 16, 58);
+    else if (state.showVectors) ctx.fillText('Arrows scaled for readability', state.width - 16, state.height - 35);
     state.dirty = false;
   }
   function resize() {
@@ -375,8 +375,8 @@
           if (result.collision) {
             state.running = false;
             state.time = finite(state.orbit.collisionTime) ? state.orbit.collisionTime : t;
-            message('Punktmassene møtes ved r = 0. Newtons punktmassemodell er singulær her; avspillingen er stoppet.');
-            announce('Radiell kollisjon. Simuleringen er stoppet.'); updatePlayback();
+            message('The point masses meet at r = 0. Newton\'s point-mass model is singular here; playback has stopped.');
+            announce('Radial collision. The simulation has stopped.'); updatePlayback();
             break;
           }
         }
@@ -384,7 +384,7 @@
         if (state.trail.length > 1500) state.trail.splice(0, state.trail.length - 1500);
       } catch (err) {
         state.running = false; updatePlayback();
-        message('Beregningen stoppet: ' + err.message + '. Velg Til start eller nye startbetingelser.');
+        message('Calculation stopped: ' + err.message + '. Select Reset or change the initial conditions.');
       }
       state.dirty = true;
     }

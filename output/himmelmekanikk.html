@@ -1,10 +1,10 @@
 <!doctype html>
-<html lang="nb">
+<html lang="en">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#101e2d">
-  <title>Himmelmekanikk · Et laboratorium for to legemer</title>
+  <title>Celestial Mechanics · A two-body laboratory</title>
   <style>
 :root {
   color-scheme: light;
@@ -210,122 +210,122 @@ select { width: 100%; padding: 7px 9px; font-size: 12px; color: var(--ink); }
     <header class="page-header">
       <div class="brand">
         <span class="brand-mark" aria-hidden="true">◌</span>
-        <div><p class="eyebrow">ET LITE FYSIKKLABORATORIUM</p><h1>Himmelmekanikk</h1></div>
+        <div><p class="eyebrow">A TWO-BODY LABORATORY</p><h1>Celestial Mechanics</h1></div>
       </div>
-      <p class="header-description">Utforsk bevegelsen til to legemer.</p>
+      <p class="header-description">Explore the motion of two gravitating bodies.</p>
     </header>
 
     <main class="workspace">
-      <aside class="controls" aria-label="Startbetingelser og visning">
+      <aside class="controls" aria-label="Initial conditions and view settings">
         <section class="control-section presets-section">
-          <h2>Begynn med en bane</h2>
-          <div class="preset-grid" aria-label="Forhåndsvalgte baner">
-            <button type="button" data-preset="circle" aria-pressed="false"><span class="preset-shape circle-shape" aria-hidden="true"></span>Sirkel</button>
+          <h2>Start with an orbit</h2>
+          <div class="preset-grid" aria-label="Orbit presets">
+            <button type="button" data-preset="circle" aria-pressed="false"><span class="preset-shape circle-shape" aria-hidden="true"></span>Circle</button>
             <button type="button" data-preset="ellipse" aria-pressed="true"><span class="preset-shape ellipse-shape" aria-hidden="true"></span>Ellipse</button>
-            <button type="button" data-preset="parabola" aria-pressed="false"><span class="preset-shape parabola-shape" aria-hidden="true"></span>Parabel</button>
-            <button type="button" data-preset="hyperbola" aria-pressed="false"><span class="preset-shape hyperbola-shape" aria-hidden="true"></span>Hyperbel</button>
-            <button type="button" data-preset="binary" aria-pressed="false" class="binary-preset"><span class="binary-symbol" aria-hidden="true">● · ●</span>To like masser</button>
+            <button type="button" data-preset="parabola" aria-pressed="false"><span class="preset-shape parabola-shape" aria-hidden="true"></span>Parabola</button>
+            <button type="button" data-preset="hyperbola" aria-pressed="false"><span class="preset-shape hyperbola-shape" aria-hidden="true"></span>Hyperbola</button>
+            <button type="button" data-preset="binary" aria-pressed="false" class="binary-preset"><span class="binary-symbol" aria-hidden="true">● · ●</span>Two equal masses</button>
           </div>
         </section>
 
         <section class="control-section initial-conditions">
-          <div class="section-heading"><h2>Startbetingelser</h2><span class="small-note">Endringer starter på nytt</span></div>
+          <div class="section-heading"><h2>Initial conditions</h2><span class="small-note">Changes reset</span></div>
           <div class="field mass-field">
-            <div class="field-heading"><label for="mass-ratio">Masseforhold <span class="math">m / M</span></label><output id="mass-ratio-value" for="mass-ratio">0,05</output></div>
+            <div class="field-heading"><label for="mass-ratio">Mass ratio <span class="math">m / M</span></label><output id="mass-ratio-value" for="mass-ratio">0.05</output></div>
             <input id="mass-ratio" type="range" min="0" max="2" step="0.001" value="0.05" aria-describedby="mass-description">
-            <div class="range-endpoints" aria-hidden="true"><span>Testpartikkel</span><span>2 × M</span></div>
-            <div class="precise-value"><label for="mass-ratio-number">Nøyaktig verdi</label><input id="mass-ratio-number" type="number" min="0" max="5" step="0.001" value="0.05" inputmode="decimal"><span>× M</span></div>
-            <p class="field-description" id="mass-description">Begge legemene beveger seg rundt det felles massesenteret.</p>
+            <div class="range-endpoints" aria-hidden="true"><span>Test particle</span><span>2 × M</span></div>
+            <div class="precise-value"><label for="mass-ratio-number">Exact value</label><input id="mass-ratio-number" type="number" min="0" max="5" step="0.001" value="0.05" inputmode="decimal"><span>× M</span></div>
+            <p class="field-description" id="mass-description">Both bodies move around their common centre of mass.</p>
           </div>
 
           <div class="field">
-            <div class="field-heading"><label for="distance">Startavstand <span class="math">r₀</span></label><output id="distance-value" for="distance">1,00 R</output></div>
+            <div class="field-heading"><label for="distance">Initial separation <span class="math">r₀</span></label><output id="distance-value" for="distance">1.00 R</output></div>
             <input id="distance" type="range" min="0.25" max="4" step="0.05" value="1">
           </div>
 
           <div class="field">
-            <div class="field-heading"><label for="speed">Relativ startfart <span class="math">v₀</span></label><output id="speed-value" for="speed">1,25</output></div>
+            <div class="field-heading"><label for="speed">Relative initial speed <span class="math">v₀</span></label><output id="speed-value" for="speed">1.25</output></div>
             <input id="speed" type="range" min="0" max="4" step="0.01" value="1.25" aria-describedby="speed-reference">
-            <div class="precise-value"><label for="speed-number">Nøyaktig verdi</label><input id="speed-number" type="number" min="0" max="10" step="0.01" value="1.25" inputmode="decimal"><span>√(GM/R)</span></div>
-            <div class="shortcut-row"><button type="button" id="circular-button">Sirkelhastighet</button><button type="button" id="escape-button">Unnslippingsfart</button></div>
-            <p class="field-description" id="speed-reference">Farten måles i forhold til det andre legemet.</p>
+            <div class="precise-value"><label for="speed-number">Exact value</label><input id="speed-number" type="number" min="0" max="10" step="0.01" value="1.25" inputmode="decimal"><span>√(GM/R)</span></div>
+            <div class="shortcut-row"><button type="button" id="circular-button">Circular speed</button><button type="button" id="escape-button">Escape speed</button></div>
+            <p class="field-description" id="speed-reference">Speed is measured relative to the other body.</p>
           </div>
 
           <div class="field">
-            <div class="field-heading"><label for="angle">Retning fra tangenten</label><output id="angle-value" for="angle">0°</output></div>
+            <div class="field-heading"><label for="angle">Angle from the tangent</label><output id="angle-value" for="angle">0°</output></div>
             <input id="angle" type="range" min="-90" max="90" step="1" value="0">
-            <div class="range-endpoints" aria-hidden="true"><span>−90° inn</span><span>0° tangent</span><span>+90° ut</span></div>
+            <div class="range-endpoints" aria-hidden="true"><span>−90° inward</span><span>0° tangent</span><span>+90° outward</span></div>
           </div>
         </section>
 
         <section class="control-section view-controls">
-          <h2>Visning</h2>
-          <label class="select-label" for="reference-frame">Referansesystem</label>
+          <h2>View</h2>
+          <label class="select-label" for="reference-frame">Reference frame</label>
           <select id="reference-frame">
-            <option value="barycentric">Felles massesenter</option>
-            <option value="primary">Følg sentrallegemet M</option>
-            <option value="relative">Relativ bane</option>
+            <option value="barycentric">Centre of mass</option>
+            <option value="primary">Follow the central body M</option>
+            <option value="relative">Relative orbit</option>
           </select>
           <div class="checkbox-list">
-            <label><input id="show-trails" type="checkbox" checked><span>Vis banespor</span></label>
-            <label><input id="show-vectors" type="checkbox"><span>Vis hastighet og A-vektor</span></label>
-            <label><input id="show-apsides" type="checkbox"><span>Vis nærmeste og fjerneste punkt</span></label>
+            <label><input id="show-trails" type="checkbox" checked><span>Show orbital trails</span></label>
+            <label><input id="show-vectors" type="checkbox"><span>Show velocity and A-vectors</span></label>
+            <label><input id="show-apsides" type="checkbox"><span>Show nearest and farthest points</span></label>
           </div>
           <div class="field zoom-field">
-            <div class="field-heading"><label for="zoom">Zoom</label><output id="zoom-value" for="zoom">1,00×</output></div>
+            <div class="field-heading"><label for="zoom">Zoom</label><output id="zoom-value" for="zoom">1.00×</output></div>
             <input id="zoom" type="range" min="0.4" max="3" step="0.05" value="1">
           </div>
         </section>
       </aside>
 
       <div class="simulation-column">
-        <section class="simulation" aria-label="Animert planetbane">
+        <section class="simulation" aria-label="Animated planetary orbit">
           <div class="simulation-heading">
-            <div class="orbit-status"><span class="status-dot" aria-hidden="true"></span><strong id="orbit-type">Ellipse</strong><span id="orbit-description">En bundet bane</span></div>
-            <div class="time-readout"><span>Tid</span><output id="time-display">0,00</output></div>
+            <div class="orbit-status"><span class="status-dot" aria-hidden="true"></span><strong id="orbit-type">Ellipse</strong><span id="orbit-description">A bound orbit</span></div>
+            <div class="time-readout"><span>Time</span><output id="time-display">0.00</output></div>
           </div>
           <div id="scene" class="scene">
-            <canvas id="orbit-canvas" role="img" aria-label="Animasjon av to legemer som beveger seg under gjensidig gravitasjon. Banetype og egenskaper vises under figuren.">Nettleseren må støtte canvas for å vise animasjonen. Baneegenskapene finnes nedenfor.</canvas>
-            <div class="scene-legend" aria-label="Legender"><span><i class="legend-dot primary-dot"></i>Sentrallegeme M</span><span><i class="legend-dot secondary-dot"></i>Legeme m</span><span><i class="legend-center">+</i>Massesenter</span></div>
+            <canvas id="orbit-canvas" role="img" aria-label="Animation of two bodies moving under their mutual gravity. The orbit type and properties are shown below.">Your browser must support canvas to display the animation. Orbital properties are listed below.</canvas>
+            <div class="scene-legend" aria-label="Legend"><span><i class="legend-dot primary-dot"></i>Central body M</span><span><i class="legend-dot secondary-dot"></i>Body m</span><span><i class="legend-center">+</i>Centre of mass</span></div>
             <p id="error-message" class="error-message" role="alert" hidden></p>
           </div>
           <div class="playback-bar">
-            <div class="playback-actions"><button type="button" id="play-button" class="play-button" aria-pressed="true">Pause</button><button type="button" id="reset-button">Til start</button><button type="button" id="fit-button">Tilpass bane</button></div>
-            <div class="time-scale-field"><label for="time-scale">Tempo <output id="time-scale-value" for="time-scale">1,0×</output></label><input id="time-scale" type="range" min="0.1" max="4" step="0.1" value="1"></div>
+            <div class="playback-actions"><button type="button" id="play-button" class="play-button" aria-pressed="true">Pause</button><button type="button" id="reset-button">Reset</button><button type="button" id="fit-button">Fit orbit</button></div>
+            <div class="time-scale-field"><label for="time-scale">Speed <output id="time-scale-value" for="time-scale">1.0×</output></label><input id="time-scale" type="range" min="0.1" max="4" step="0.1" value="1"></div>
           </div>
         </section>
 
-        <section class="metrics" aria-label="Banens egenskaper">
-          <div class="metric"><span>Eksentrisitet <span class="math">e</span></span><output id="eccentricity-value">—</output><small>0: sirkel · 1: parabel</small></div>
-          <div class="metric"><span>Spesifikk energi <span class="math">ε</span></span><output id="energy-value">—</output><small>Negativ energi gir en bundet bane</small></div>
-          <div class="metric"><span>Omløpstid <span class="math">T</span></span><output id="period-value">—</output><small>I modellens tidsenhet</small></div>
+        <section class="metrics" aria-label="Orbital properties">
+          <div class="metric"><span>Eccentricity <span class="math">e</span></span><output id="eccentricity-value">—</output><small>0: circle · 1: parabola</small></div>
+          <div class="metric"><span>Specific energy <span class="math">ε</span></span><output id="energy-value">—</output><small>Negative energy gives a bound orbit</small></div>
+          <div class="metric"><span>Orbital period <span class="math">T</span></span><output id="period-value">—</output><small>In the model's time unit</small></div>
         </section>
 
-        <section class="orbit-details" aria-label="Flere baneegenskaper">
+        <section class="orbit-details" aria-label="More orbital properties">
           <dl class="detail-values">
-            <div><dt>Minste avstand</dt><dd id="periapsis-value">—</dd></div>
-            <div><dt>Største avstand</dt><dd id="apoapsis-value">—</dd></div>
-            <div><dt>Dreieimpuls <span class="math">h</span></dt><dd id="angular-momentum-value">—</dd></div>
-            <div><dt>Sirkelhastighet ved start</dt><dd id="circular-speed-value">—</dd></div>
-            <div><dt>Unnslippingsfart ved start</dt><dd id="escape-speed-value">—</dd></div>
+            <div><dt>Minimum separation</dt><dd id="periapsis-value">—</dd></div>
+            <div><dt>Maximum separation</dt><dd id="apoapsis-value">—</dd></div>
+            <div><dt>Angular momentum <span class="math">h</span></dt><dd id="angular-momentum-value">—</dd></div>
+            <div><dt>Initial circular speed</dt><dd id="circular-speed-value">—</dd></div>
+            <div><dt>Initial escape speed</dt><dd id="escape-speed-value">—</dd></div>
           </dl>
-          <p id="a-vector-description" class="vector-note">A-vektoren peker mot periapsis, og lengden angir hvor langstrakt den relative banen er.</p>
+          <p id="a-vector-description" class="vector-note">The A-vector points towards periapsis, and its magnitude determines the eccentricity of the relative orbit.</p>
         </section>
 
         <details class="model-notes">
-          <summary>Modellen og enhetene</summary>
+          <summary>Model and units</summary>
           <div class="model-notes-content">
-            <p>Simuleringen bruker Newtons gravitasjon for to punktmasser. Masseforholdet er <span class="math">q = m/M</span>. Når massene er sammenlignbare, beveger begge seg tydelig rundt det felles massesenteret. Verdien <span class="math">q = 0</span> er testpartikkelgrensen.</p>
-            <p>Enhetene velges slik at <span class="math">G = M = R = 1</span>. Avstander måles i <span class="math">R</span>, fart i <span class="math">√(GM/R)</span> og tid i <span class="math">√(R³/GM)</span>. I disse enhetene har den relative bevegelsen gravitasjonsparameteren <span class="math">μ = 1 + q</span>, som tilsvarer <span class="math">G(M + m)</span>.</p>
-            <p>Startfarten er hastigheten til <span class="math">m</span> relativt til <span class="math">M</span>. Energi og dreieimpuls er oppgitt per redusert masse, i enhetene <span class="math">GM/R</span> og <span class="math">√(GMR)</span>. Å følge sentrallegemet er et valg av visning; begge legemene inngår fortsatt i fysikken.</p>
-            <p>Markørenes størrelser er gjort synlige og er ikke i målestokk. Modellen har ingen fysiske overflater eller kollisjonsradier. Endrer du en startbetingelse, begynner simuleringen på nytt med den nye verdien.</p>
-            <p>Stiplet linje viser den beregnede banen, mens det heltrukne sporet viser bevegelsen som har skjedd. Åpne og svært langstrakte baner kan fortsette utenfor utsnittet. Velg «Tilpass bane» for å ta med legemenes nåværende posisjoner.</p>
+            <p>The simulation uses Newtonian gravity for two point masses. The mass ratio is <span class="math">q = m/M</span>. When the masses are comparable, both move noticeably around their common centre of mass. The value <span class="math">q = 0</span> is the test-particle limit.</p>
+            <p>The units are chosen so that <span class="math">G = M = R = 1</span>. Separations are measured in <span class="math">R</span>, speed in <span class="math">√(GM/R)</span> and time in <span class="math">√(R³/GM)</span>. In these units, the gravitational parameter for relative motion is <span class="math">μ = 1 + q</span>, corresponding to <span class="math">G(M + m)</span>.</p>
+            <p>The initial speed is the speed of <span class="math">m</span> relative to <span class="math">M</span>. Energy and angular momentum are given per unit of reduced mass, in units of <span class="math">GM/R</span> and <span class="math">√(GMR)</span>. Following the central body changes the view; the calculation still includes both bodies.</p>
+            <p>The markers are sized for visibility and are not to scale. The model has no physical surfaces or collision radii. Changing an initial condition restarts the simulation with the new value.</p>
+            <p>The dashed line shows the predicted orbit, while the solid trail shows the motion so far. Open and very elongated orbits may extend beyond the view. Select “Fit orbit” to include the bodies' current positions.</p>
           </div>
         </details>
       </div>
     </main>
     <p id="live-status" class="sr-only" aria-live="polite" aria-atomic="true"></p>
-    <footer class="page-footer"><span>Newtonsk gravitasjon · To legemer · Ett baneplan</span><span>Fra Keplers planetbaner til hydrogenatomet</span></footer>
+    <footer class="page-footer"><span>Newtonian gravity · Two bodies · One orbital plane</span><span>From Kepler's planetary orbits to the hydrogen atom</span></footer>
   </div>
 <script>
 /* Newtonian two-body motion in G = M = R = 1 units.
@@ -391,9 +391,9 @@ select { width: 100%; padding: 7px 9px; font-size: 12px; color: var(--ink); }
       speed: Number(input.speed ?? 1),
       angleDeg: Number(input.angleDeg ?? 0)
     };
-    if (!Object.values(config).every(Number.isFinite)) throw new RangeError('Alle startverdier må være endelige tall.');
+    if (!Object.values(config).every(Number.isFinite)) throw new RangeError('All initial values must be finite numbers.');
     if (config.massRatio < 0 || config.r0 <= 0 || config.speed < 0) {
-      throw new RangeError('Masseforhold og fart må være ikke-negative, og avstanden må være positiv.');
+      throw new RangeError('Mass ratio and speed must be non-negative, and separation must be positive.');
     }
     const {massRatio: q, r0, speed, angleDeg} = config;
     const mu = 1 + q, sqrtMu = Math.sqrt(mu);
@@ -439,7 +439,7 @@ select { width: 100%; padding: 7px 9px; font-size: 12px; color: var(--ink); }
       const target = sqrtMu * dt;
       let low = 0, high = Math.sqrt(r0);
       for (let i = 0; universal(high, target).f < 0; i++) {
-        if (i > 100) throw new RangeError('Tiden er utenfor beregningsområdet.');
+        if (i > 100) throw new RangeError('Time is outside the supported calculation range.');
         high *= 2;
       }
       let x = Math.min(high, target / r0);
@@ -456,7 +456,7 @@ select { width: 100%; padding: 7px 9px; font-size: 12px; color: var(--ink); }
     }
 
     function sample(time) {
-      if (!Number.isFinite(time) || time < 0) throw new RangeError('Tiden må være et endelig, ikke-negativt tall.');
+      if (!Number.isFinite(time) || time < 0) throw new RangeError('Time must be a finite, non-negative number.');
       if (collisionTime !== null && time >= collisionTime) {
         return {r: [0, 0], v: null, distance: 0, speed: null, collision: true, t: collisionTime};
       }
@@ -491,7 +491,7 @@ select { width: 100%; padding: 7px 9px; font-size: 12px; color: var(--ink); }
     }
 
     function path({extent = 12 * r0, samples = 720} = {}) {
-      if (!(extent > 0) || !Number.isFinite(extent)) throw new RangeError('Utsnittet må være positivt og endelig.');
+      if (!(extent > 0) || !Number.isFinite(extent)) throw new RangeError('The plot extent must be positive and finite.');
       const count = Math.max(24, Math.min(10000, Math.round(samples) || 720));
       if (radial) {
         const end = Math.min(extent, apoapsis ?? extent);
@@ -528,7 +528,7 @@ select { width: 100%; padding: 7px 9px; font-size: 12px; color: var(--ink); }
   const $ = function (id) { return document.getElementById(id); };
   const canvas = $('orbit-canvas');
   const ctx = canvas.getContext('2d');
-  const names = {circle: 'Sirkel', ellipse: 'Ellipse', parabola: 'Parabel', hyperbola: 'Hyperbel', radial: 'Radiell bevegelse'};
+  const names = {circle: 'Circle', ellipse: 'Ellipse', parabola: 'Parabola', hyperbola: 'Hyperbola', radial: 'Radial motion'};
   const defaults = {massRatio: 0.05, r0: 1, speed: 1.2 * Math.sqrt(1.05), angleDeg: 0};
   const clamp = function (v, lo, hi) { return Math.max(lo, Math.min(hi, v)); };
   const finite = function (v) { return typeof v === 'number' && Number.isFinite(v); };
@@ -570,9 +570,9 @@ select { width: 100%; padding: 7px 9px; font-size: 12px; color: var(--ink); }
     if (!Number.isFinite(n)) return '∞';
     if (Math.abs(n) < 1e-12) n = 0;
     if (Math.abs(n) >= 100000 || (Math.abs(n) > 0 && Math.abs(n) < 0.0001)) {
-      return n.toExponential(2).replace('.', ',').replace('e+', ' · 10^').replace('e-', ' · 10^−');
+      return n.toExponential(2).replace('e+', ' · 10^').replace('e-', ' · 10^−');
     }
-    return new Intl.NumberFormat('nb-NO', {maximumFractionDigits: digits === undefined ? 3 : digits}).format(n);
+    return new Intl.NumberFormat('en-GB', {useGrouping: false, maximumFractionDigits: digits === undefined ? 3 : digits}).format(n);
   }
   function announce(text) { $('live-status').textContent = text; }
   function message(text) {
@@ -580,7 +580,7 @@ select { width: 100%; padding: 7px 9px; font-size: 12px; color: var(--ink); }
     $('error-message').hidden = !text;
   }
   function updatePlayback() {
-    $('play-button').textContent = state.running ? 'Pause' : 'Spill av';
+    $('play-button').textContent = state.running ? 'Pause' : 'Play';
     $('play-button').setAttribute('aria-pressed', String(state.running));
   }
   function pointsForFrame(r) {
@@ -610,7 +610,7 @@ select { width: 100%; padding: 7px 9px; font-size: 12px; color: var(--ink); }
     };
     state.zoom = 1;
     $('zoom').value = '1';
-    $('zoom-value').textContent = '1,00×';
+    $('zoom-value').textContent = '1.00×';
     state.dirty = true;
   }
 
@@ -636,35 +636,35 @@ select { width: 100%; padding: 7px 9px; font-size: 12px; color: var(--ink); }
     $('time-scale-value').textContent = fmt(state.timeScale, 1) + '×';
     $('orbit-type').textContent = names[o.type] || o.type;
     const descriptions = {
-      circle: 'Konstant avstand', ellipse: 'Bundet bevegelse',
-      parabola: 'På unnslippingsgrensen', hyperbola: 'Ubundet bevegelse',
-      radial: o.collisionTime !== null && finite(o.collisionTime) ? 'Bevegelse mot en kollisjon' : 'Bevegelse langs en rett linje'
+      circle: 'Constant separation', ellipse: 'Bound motion',
+      parabola: 'At the escape threshold', hyperbola: 'Unbound motion',
+      radial: o.collisionTime !== null && finite(o.collisionTime) ? 'Motion ending in a collision' : 'Motion along a straight line'
     };
     $('orbit-description').textContent = descriptions[o.type];
     $('eccentricity-value').textContent = fmt(o.e, Math.abs(o.e - 1) < 0.001 ? 8 : 4);
     $('energy-value').textContent = fmt(o.energy, 5);
-    $('period-value').textContent = o.period ? fmt(o.period, 3) : 'Ingen';
+    $('period-value').textContent = o.period ? fmt(o.period, 3) : 'None';
     $('periapsis-value').textContent = fmt(o.periapsis, 4) + ' R';
-    $('apoapsis-value').textContent = o.apoapsis === null ? 'Ubundet' : fmt(o.apoapsis, 4) + ' R';
+    $('apoapsis-value').textContent = o.apoapsis === null ? 'Unbound' : fmt(o.apoapsis, 4) + ' R';
     $('angular-momentum-value').textContent = fmt(o.h, 4);
     $('circular-speed-value').textContent = fmt(o.circularSpeed, 5);
     $('escape-speed-value').textContent = fmt(o.escapeSpeed, 5);
-    $('speed-reference').textContent = fmt(p.speed / o.circularSpeed, 3) + ' × lokal sirkelhastighet. Farten beholdes når massen endres.';
+    $('speed-reference').textContent = fmt(p.speed / o.circularSpeed, 3) + ' × local circular speed. Speed stays fixed when the mass changes.';
     $('mass-description').textContent = p.massRatio === 0 ?
-      'Testpartikkelgrensen: M står i massesenteret, mens partikkelen følger gravitasjonsfeltet.' :
-      'M ligger ' + fmt(p.massRatio / (1 + p.massRatio) * 100, 2) + ' % av avstanden fra massesenteret. Begge legemer beveger seg.';
+      'Test-particle limit: M remains at the centre of mass while the particle moves in its gravitational field.' :
+      'M is ' + fmt(p.massRatio / (1 + p.massRatio) * 100, 2) + '% of the separation from the centre of mass. Both bodies move.';
     $('a-vector-description').textContent = o.type === 'radial' ?
-      'Dreieimpulsen er null. Den radielle banen er et grensetilfelle, selv om e = 1.' :
-      o.type === 'circle' ? 'A = 0: Sirkelen har ingen bestemt periapsisretning.' :
-      'A/μ = e = ' + fmt(o.e, 5) + '. A peker mot periapsis i den relative banen. Pilenes lengder er tilpasset figuren.';
+      'Angular momentum is zero. Radial motion is a degenerate case, even though e = 1.' :
+      o.type === 'circle' ? 'A = 0: A circle has no unique periapsis direction.' :
+      'A/μ = e = ' + fmt(o.e, 5) + '. A points towards periapsis of the relative orbit. Arrow lengths are scaled to fit the view.';
     document.querySelectorAll('[data-preset]').forEach(function (button) {
       button.setAttribute('aria-pressed', String(button.dataset.preset === state.preset));
     });
     const legend = document.querySelector('.scene-legend');
     legend.children[0].hidden = state.frame === 'relative';
     legend.children[2].hidden = state.frame === 'relative';
-    canvas.setAttribute('aria-label', names[o.type] + '. Masseforhold ' + fmt(p.massRatio) +
-      ', eksentrisitet ' + fmt(o.e, 5) + ', energi ' + fmt(o.energy, 5) + '. Juster startbetingelsene med kontrollene.');
+    canvas.setAttribute('aria-label', names[o.type] + '. Mass ratio ' + fmt(p.massRatio) +
+      ', eccentricity ' + fmt(o.e, 5) + ', energy ' + fmt(o.energy, 5) + '. Use the controls to adjust the initial conditions.');
     updatePlayback();
   }
 
@@ -678,12 +678,12 @@ select { width: 100%; padding: 7px 9px; font-size: 12px; color: var(--ink); }
       message('');
       fit(false);
       updateControls();
-      $('time-display').textContent = '0,00';
-      if (announceChange) announce(names[orbit.type] + '. Eksentrisitet ' + fmt(orbit.e, 5) + '.');
+      $('time-display').textContent = '0.00';
+      if (announceChange) announce(names[orbit.type] + '. Eccentricity ' + fmt(orbit.e, 5) + '.');
       save();
     } catch (err) {
       state.running = false; updatePlayback();
-      message('Startbetingelsene kunne ikke beregnes: ' + err.message);
+      message('Could not calculate the initial conditions: ' + err.message);
     }
   }
   function changeParam(key, value) {
@@ -729,9 +729,9 @@ select { width: 100%; padding: 7px 9px; font-size: 12px; color: var(--ink); }
   }
   $('play-button').addEventListener('click', togglePlay);
   $('reset-button').addEventListener('click', function () {
-    state.running = false; rebuild(false); announce('Tilbake til start. Avspillingen er satt på pause.');
+    state.running = false; rebuild(false); announce('Returned to the initial state. Playback is paused.');
   });
-  $('fit-button').addEventListener('click', function () { fit(true); announce('Visningen er tilpasset banen og legemenes nåværende posisjoner.'); });
+  $('fit-button').addEventListener('click', function () { fit(true); announce('The view now includes the orbit and the current positions of both bodies.'); });
   $('reference-frame').addEventListener('change', function (event) {
     state.frame = event.target.value; fit(true); updateControls(); save();
   });
@@ -857,8 +857,8 @@ select { width: 100%; padding: 7px 9px; font-size: 12px; color: var(--ink); }
       apsis(state.orbit.apoapsis, 'Apoapsis', -1);
     }
     const r = state.current.r, positions = pointsForFrame(r);
-    if (state.frame === 'barycentric') cross([0, 0], q > 0.03 ? 'Massesenter' : '');
-    else if (state.frame === 'primary') cross([q / (1 + q) * r[0], q / (1 + q) * r[1]], 'Massesenter');
+    if (state.frame === 'barycentric') cross([0, 0], q > 0.03 ? 'Centre of mass' : '');
+    else if (state.frame === 'primary') cross([q / (1 + q) * r[0], q / (1 + q) * r[1]], 'Centre of mass');
     else cross([0, 0], 'r = 0');
     const primaryVisible = state.frame !== 'relative' ? dot(positions[0], 10, '#edbd6c', 'M') : true;
     const secondaryRadius = state.frame === 'relative' ? 5 : q === 0 ? 4 : clamp(10 * Math.cbrt(q), 4.5, 16);
@@ -871,8 +871,8 @@ select { width: 100%; padding: 7px 9px; font-size: 12px; color: var(--ink); }
     }
     ctx.restore();
     ctx.font = '11px system-ui'; ctx.fillStyle = '#9aabb7'; ctx.textAlign = 'right';
-    if (!secondaryVisible || !primaryVisible) ctx.fillText('Utenfor utsnittet · velg Tilpass bane', state.width - 16, 58);
-    else if (state.showVectors) ctx.fillText('Piler skalert for lesbarhet', state.width - 16, state.height - 35);
+    if (!secondaryVisible || !primaryVisible) ctx.fillText('Outside the view · select Fit orbit', state.width - 16, 58);
+    else if (state.showVectors) ctx.fillText('Arrows scaled for readability', state.width - 16, state.height - 35);
     state.dirty = false;
   }
   function resize() {
@@ -900,8 +900,8 @@ select { width: 100%; padding: 7px 9px; font-size: 12px; color: var(--ink); }
           if (result.collision) {
             state.running = false;
             state.time = finite(state.orbit.collisionTime) ? state.orbit.collisionTime : t;
-            message('Punktmassene møtes ved r = 0. Newtons punktmassemodell er singulær her; avspillingen er stoppet.');
-            announce('Radiell kollisjon. Simuleringen er stoppet.'); updatePlayback();
+            message('The point masses meet at r = 0. Newton\'s point-mass model is singular here; playback has stopped.');
+            announce('Radial collision. The simulation has stopped.'); updatePlayback();
             break;
           }
         }
@@ -909,7 +909,7 @@ select { width: 100%; padding: 7px 9px; font-size: 12px; color: var(--ink); }
         if (state.trail.length > 1500) state.trail.splice(0, state.trail.length - 1500);
       } catch (err) {
         state.running = false; updatePlayback();
-        message('Beregningen stoppet: ' + err.message + '. Velg Til start eller nye startbetingelser.');
+        message('Calculation stopped: ' + err.message + '. Select Reset or change the initial conditions.');
       }
       state.dirty = true;
     }

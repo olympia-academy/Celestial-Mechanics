@@ -49,7 +49,8 @@ def main():
             desc = ("En ellipse med solen i venstre brennpunkt og planeten på banen."
                     if language == "nb" else
                     "An ellipse with the sun at the left focus and a planet on the orbit.")
-            svg = f'''<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1400 800" width="1400" height="800" role="img" aria-labelledby="logo-title logo-desc" lang="{language}">
+            text_transform = f"translate({left:.9f} 355) scale({scale:.12f} {-scale:.12f})"
+            svg = f'''<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1400 640" width="1400" height="640" role="img" aria-labelledby="logo-title logo-desc" lang="{language}">
   <title id="logo-title">{escape(label)}</title>
   <desc id="logo-desc">{desc} a=500, b=210, c=sqrt(a²-b²). Rotation: -12°.</desc>
   <defs>
@@ -57,17 +58,23 @@ def main():
       <rect x="-520" y="-250" width="1040" height="500" fill="white"/>
       <circle cx="{PX:.9f}" cy="{PY:.9f}" r="28" fill="black"/>
     </mask>
+    <mask id="wordmark-clearance" maskUnits="userSpaceOnUse" x="0" y="0" width="1400" height="640">
+      <rect width="1400" height="640" fill="white"/>
+      <rect x="{left - 16:.9f}" y="270" width="{scale * width + 32:.9f}" height="100" fill="black"/>
+    </mask>
   </defs>
-  <g id="orbit-symbol" transform="translate(700 340) rotate(-12)">
+  <g mask="url(#wordmark-clearance)">
+  <g id="orbit-symbol" transform="translate(700 320) rotate(-12)">
     <ellipse id="orbit" cx="0" cy="0" rx="{A:g}" ry="{B:g}" fill="none" stroke="{ink}" stroke-width="8" mask="url(#planet-gap)"/>
     <circle id="sun" cx="{-C:.9f}" cy="0" r="30" fill="#dba73e"/>
     <circle id="planet" cx="{PX:.9f}" cy="{PY:.9f}" r="20" fill="#039bb6"/>
   </g>
-  <path id="wordmark" fill="{ink}" transform="translate({left:.9f} 730) scale({scale:.12f} {-scale:.12f})" d="{d}"/>
+  </g>
+  <path id="wordmark" fill="{ink}" transform="{text_transform}" d="{d}"/>
 </svg>
 '''
             output = OUT / f"{name}{suffix}.svg"
-            output.write_text(svg, encoding="utf-8")
+            output.write_text(svg, encoding="utf-8", newline="\n")
             print(f"Created {output.relative_to(ROOT)}")
     print(f"Focus offset: {C:.9f}; planet: ({PX:.9f}, {PY:.9f})")
 

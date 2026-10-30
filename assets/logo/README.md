@@ -18,10 +18,11 @@ The symbol represents an orbit viewed in its own plane. Its semiaxes are
 `a = 500` and `b = 210`. The sun is at the left focus,
 `(-sqrt(a² - b²), 0)`, and the planet is at
 `(a cos θ, b sin θ)`, with `θ = -35°`. The entire symbol is rotated
-by `-12°` and translated by `(700, 340)`.
+by `-12°` and translated by `(700, 320)`.
 
 The ellipse is an SVG `ellipse` element. A small transparent gap around
-the planet keeps the contour legible. The body markers are schematic;
+the planet keeps the contour legible. The wordmark runs through the centre
+of the ellipse, with transparent clearance around the wordmark. The body markers are schematic;
 their radii do not represent physical sizes.
 
 The shared symbol was developed from the selected ImageGen concept and

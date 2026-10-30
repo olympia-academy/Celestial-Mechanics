@@ -61,9 +61,9 @@
       speed: Number(input.speed ?? 1),
       angleDeg: Number(input.angleDeg ?? 0)
     };
-    if (!Object.values(config).every(Number.isFinite)) throw new RangeError('Alle startverdier må være endelige tall.');
+    if (!Object.values(config).every(Number.isFinite)) throw new RangeError('All initial values must be finite numbers.');
     if (config.massRatio < 0 || config.r0 <= 0 || config.speed < 0) {
-      throw new RangeError('Masseforhold og fart må være ikke-negative, og avstanden må være positiv.');
+      throw new RangeError('Mass ratio and speed must be non-negative, and separation must be positive.');
     }
     const {massRatio: q, r0, speed, angleDeg} = config;
     const mu = 1 + q, sqrtMu = Math.sqrt(mu);
@@ -109,7 +109,7 @@
       const target = sqrtMu * dt;
       let low = 0, high = Math.sqrt(r0);
       for (let i = 0; universal(high, target).f < 0; i++) {
-        if (i > 100) throw new RangeError('Tiden er utenfor beregningsområdet.');
+        if (i > 100) throw new RangeError('Time is outside the supported calculation range.');
         high *= 2;
       }
       let x = Math.min(high, target / r0);
@@ -126,7 +126,7 @@
     }
 
     function sample(time) {
-      if (!Number.isFinite(time) || time < 0) throw new RangeError('Tiden må være et endelig, ikke-negativt tall.');
+      if (!Number.isFinite(time) || time < 0) throw new RangeError('Time must be a finite, non-negative number.');
       if (collisionTime !== null && time >= collisionTime) {
         return {r: [0, 0], v: null, distance: 0, speed: null, collision: true, t: collisionTime};
       }
@@ -161,7 +161,7 @@
     }
 
     function path({extent = 12 * r0, samples = 720} = {}) {
-      if (!(extent > 0) || !Number.isFinite(extent)) throw new RangeError('Utsnittet må være positivt og endelig.');
+      if (!(extent > 0) || !Number.isFinite(extent)) throw new RangeError('The plot extent must be positive and finite.');
       const count = Math.max(24, Math.min(10000, Math.round(samples) || 720));
       if (radial) {
         const end = Math.min(extent, apoapsis ?? extent);

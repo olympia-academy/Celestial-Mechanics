@@ -18,6 +18,6 @@ const server = http.createServer((request, response) => {
   });
 });
 server.listen(Number(process.env.PORT || 4173), '127.0.0.1', () => {
-  if (require.main === module) console.log('Himmelmekanikk: http://127.0.0.1:' + server.address().port);
+  if (require.main === module) console.log('Celestial Mechanics: http://127.0.0.1:' + server.address().port);
 });
 module.exports = server;
