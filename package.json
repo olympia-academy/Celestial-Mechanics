@@ -1,0 +1,12 @@
+{
+  "name": "himmelmekanikk",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Interaktivt newtonsk tolegemeproblem",
+  "scripts": {
+    "start": "node server.cjs",
+    "test": "node --test physics.test.cjs",
+    "test:ui": "node ui-test.cjs",
+    "build": "node build.cjs"
+  }
+}

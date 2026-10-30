@@ -1,0 +1,928 @@
+<!doctype html>
+<html lang="nb">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#101e2d">
+  <title>Himmelmekanikk · Et laboratorium for to legemer</title>
+  <style>
+:root {
+  color-scheme: light;
+  --paper: #f5f4ef;
+  --panel: #fffefa;
+  --ink: #1b2b37;
+  --muted: #647078;
+  --line: #dcded8;
+  --night: #101e2d;
+  --night-line: #2a3a4a;
+  --night-text: #e6edf1;
+  --sun: #edbd6c;
+  --planet: #83d2dc;
+  --green: #247265;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-synthesis: none;
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--paper); color: var(--ink); font-size: 14px; line-height: 1.5; }
+button, input, select { font: inherit; }
+button, select, input[type="checkbox"], input[type="range"] { cursor: pointer; }
+button { color: inherit; }
+button, select { min-height: 38px; border: 1px solid var(--line); border-radius: 7px; background: var(--panel); }
+button { padding: 7px 12px; transition: background .15s ease, border-color .15s ease; }
+button:hover { background: #e9ede8; border-color: #bac5be; }
+button:active { transform: translateY(1px); }
+button:focus-visible, select:focus-visible, input:focus-visible, summary:focus-visible { outline: 3px solid #76a7c4; outline-offset: 3px; }
+button:disabled { opacity: .5; cursor: not-allowed; }
+button[hidden], [hidden] { display: none !important; }
+.app-shell { max-width: 1520px; margin: 0 auto; padding: 28px 38px 16px; }
+.page-header { display: flex; align-items: center; justify-content: space-between; gap: 24px; margin: 0 0 26px; }
+.brand { display: flex; align-items: center; gap: 16px; }
+.brand-mark { font-family: Georgia, serif; font-size: 63px; font-weight: 400; line-height: 1; color: #416960; }
+.eyebrow { margin: 0 0 1px; font-size: 10px; font-weight: 600; letter-spacing: .17em; color: var(--muted); }
+h1 { margin: 0; font-family: Georgia, "Times New Roman", serif; font-size: 36px; font-weight: 400; letter-spacing: -.035em; line-height: 1.16; }
+.header-description { color: var(--muted); margin: 13px 0 0; font-size: 14px; }
+.workspace { display: grid; grid-template-columns: 298px minmax(0, 1fr); gap: 26px; align-items: start; }
+.controls { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; overflow: hidden; }
+.control-section { padding: 21px 21px; }
+.control-section + .control-section { border-top: 1px solid var(--line); }
+h2 { margin: 0 0 14px; font-size: 14px; font-weight: 650; letter-spacing: -.01em; }
+.section-heading { margin-bottom: 19px; }
+.section-heading h2 { margin-bottom: 3px; }
+.small-note { color: var(--muted); font-size: 11px; }
+.preset-grid { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 7px; }
+.preset-grid button { display: flex; align-items: center; gap: 9px; text-align: left; font-size: 12px; padding: 10px; min-height: 42px; }
+.preset-grid button[aria-pressed="true"], .preset-grid button.active { border-color: var(--green); color: #175a50; background: #eaf2ec; }
+.preset-grid .binary-preset { grid-column: 1 / -1; justify-content: center; margin-top: 1px; }
+.preset-shape { display: block; width: 21px; height: 17px; border: 1.3px solid currentColor; border-radius: 50%; flex-shrink: 0; }
+.circle-shape { width: 17px; margin-right: 4px; }
+.ellipse-shape { height: 12px; }
+.parabola-shape { border-right: 0; border-radius: 100% 0 0 100%; height: 19px; width: 18px; margin-right: 3px; }
+.hyperbola-shape { border: 0; border-left: 1.3px solid currentColor; border-radius: 75% 0 0 75%; width: 17px; margin-left: 4px; }
+.binary-symbol { color: #536c72; letter-spacing: 2px; font-size: 12px; }
+.field + .field { margin-top: 24px; }
+.field-heading { display: flex; align-items: baseline; justify-content: space-between; gap: 9px; margin-bottom: 8px; font-size: 12px; }
+.field-heading label { font-weight: 550; }
+.field-heading output { font-variant-numeric: tabular-nums; color: #28665b; font-weight: 600; white-space: nowrap; }
+.math { font-family: Georgia, "Times New Roman", serif; font-style: italic; }
+input[type="range"] { display: block; width: 100%; height: 18px; margin: 4px 0; accent-color: #39796c; }
+.range-endpoints { display: flex; justify-content: space-between; color: #788087; font-size: 10px; gap: 6px; margin-top: 3px; }
+.precise-value { display: flex; align-items: center; gap: 7px; font-size: 11px; color: var(--muted); margin-top: 10px; }
+.precise-value label { flex: 1; }
+.precise-value input { width: 104px; min-width: 0; border: 1px solid var(--line); border-radius: 5px; padding: 5px 6px; background: var(--panel); color: var(--ink); font-size: 12px; font-variant-numeric: tabular-nums; }
+.precise-value > span { white-space: nowrap; }
+.field-description { color: var(--muted); font-size: 11px; line-height: 1.5; margin: 9px 0 0; }
+.shortcut-row { display: flex; gap: 6px; margin-top: 10px; }
+.shortcut-row button { font-size: 10px; flex: 1; padding: 5px 6px; min-height: 30px; background: #f4f6f1; }
+.select-label { display: block; font-size: 11px; color: var(--muted); margin-bottom: 6px; }
+select { width: 100%; padding: 7px 9px; font-size: 12px; color: var(--ink); }
+.checkbox-list { display: flex; flex-direction: column; gap: 11px; margin: 16px 0 0; }
+.checkbox-list label { display: flex; align-items: center; gap: 9px; font-size: 12px; cursor: pointer; }
+.checkbox-list input { width: 15px; height: 15px; margin: 0; accent-color: #39796c; flex-shrink: 0; }
+.zoom-field { margin-top: 20px; }
+.simulation-column { min-width: 0; }
+.simulation { overflow: hidden; border-radius: 13px; background: var(--night); color: var(--night-text); box-shadow: 0 8px 30px rgb(17 31 41 / 8%); }
+.simulation-heading { display: flex; justify-content: space-between; align-items: center; gap: 15px; padding: 19px 24px 0; min-height: 52px; }
+.orbit-status { display: flex; align-items: center; gap: 9px; min-width: 0; }
+.status-dot { width: 6px; height: 6px; background: #94c3b3; border-radius: 50%; flex-shrink: 0; }
+#orbit-type { font-size: 13px; font-weight: 550; }
+#orbit-description { font-size: 11px; color: #9daeba; margin-left: 4px; }
+.time-readout { display: flex; align-items: baseline; gap: 8px; color: #9daeba; font-size: 11px; white-space: nowrap; }
+.time-readout output { color: #dfe8ee; font-size: 12px; font-variant-numeric: tabular-nums; }
+.scene { position: relative; width: 100%; height: clamp(380px, 47vw, 610px); min-height: 320px; overflow: hidden; }
+#orbit-canvas { display: block; width: 100%; height: 100%; }
+.scene-legend { position: absolute; top: 13px; left: 24px; display: flex; flex-wrap: wrap; gap: 8px 16px; font-size: 10px; color: #a4b4bf; pointer-events: none; }
+.scene-legend > span { display: flex; align-items: center; gap: 6px; }
+.legend-dot { display: inline-block; width: 6px; height: 6px; border-radius: 50%; }
+.primary-dot { background: var(--sun); }
+.secondary-dot { background: var(--planet); }
+.legend-center { font-style: normal; font-size: 13px; line-height: 1; color: #81939f; }
+.error-message { position: absolute; bottom: 15px; left: 20px; right: 20px; margin: 0; padding: 10px 13px; border: 1px solid #7a6350; background: #2f2b29; border-radius: 6px; color: #f3d4b3; font-size: 12px; }
+.playback-bar { border-top: 1px solid var(--night-line); padding: 14px 21px; display: flex; justify-content: space-between; align-items: center; gap: 20px; }
+.playback-actions { display: flex; gap: 7px; }
+.playback-actions button { min-height: 35px; color: #c9d7df; border-color: #344656; background: transparent; font-size: 11px; padding: 7px 12px; }
+.playback-actions button:hover { background: #243648; border-color: #597080; }
+.playback-actions .play-button { background: #d8e9e4; border-color: #d8e9e4; color: #17382f; font-weight: 600; min-width: 68px; }
+.playback-actions .play-button:hover { background: #f0f6ef; }
+.time-scale-field { width: 160px; min-width: 100px; }
+.time-scale-field label { display: flex; justify-content: space-between; font-size: 10px; color: #b0c1cb; margin-bottom: 3px; }
+.time-scale-field output { font-variant-numeric: tabular-nums; }
+.time-scale-field input { height: 12px; accent-color: #a4d2c2; }
+.metrics { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 20px; padding: 25px 2px 22px; border-bottom: 1px solid var(--line); }
+.metric { display: flex; flex-direction: column; gap: 5px; }
+.metric > span { font-size: 11px; color: var(--muted); }
+.metric output { font-family: Georgia, "Times New Roman", serif; font-size: 28px; line-height: 1.2; font-variant-numeric: tabular-nums; letter-spacing: -.02em; }
+.metric small { font-size: 10px; color: var(--muted); line-height: 1.4; }
+.orbit-details { padding: 19px 2px 2px; }
+.detail-values { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 13px 22px; margin: 0; }
+.detail-values > div { min-width: 0; }
+.detail-values dt { color: var(--muted); font-size: 10px; margin-bottom: 3px; }
+.detail-values dd { margin: 0; font-size: 12px; font-variant-numeric: tabular-nums; }
+.vector-note { font-size: 12px; color: #4e6767; line-height: 1.6; margin: 21px 0 0; max-width: 76ch; }
+.model-notes { margin-top: 23px; padding: 15px 2px; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+.model-notes summary { cursor: pointer; font-size: 12px; font-weight: 550; color: #39544e; }
+.model-notes-content { max-width: 85ch; }
+.model-notes-content p { color: var(--muted); font-size: 12px; line-height: 1.7; margin-bottom: 0; }
+.page-footer { display: flex; justify-content: space-between; gap: 20px; margin: 26px 0 0; padding-top: 15px; border-top: 1px solid var(--line); color: #788087; font-size: 10px; }
+.sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
+@media (min-width: 1450px) { .scene { height: 630px; } }
+@media (max-width: 1080px) {
+  .app-shell { padding: 23px 23px 16px; }
+  .workspace { grid-template-columns: 275px minmax(0,1fr); gap: 20px; }
+  .control-section { padding: 19px 18px; }
+  .scene { height: 490px; }
+  #orbit-description { display: none; }
+  .playback-bar { padding: 13px 17px; gap: 12px; }
+  .playback-actions button { padding: 6px 9px; }
+  .time-scale-field { width: 120px; }
+  .detail-values { grid-template-columns: repeat(2,minmax(0,1fr)); }
+}
+@media (max-width: 800px) {
+  .app-shell { padding: 20px 18px 14px; }
+  .page-header { margin-bottom: 20px; }
+  .header-description { display: none; }
+  h1 { font-size: 32px; }
+  .brand-mark { font-size: 55px; }
+  .workspace { display: flex; flex-direction: column; gap: 24px; }
+  .simulation-column { display: contents; }
+  .simulation { order: 0; width: 100%; }
+  .metrics { order: 2; width: 100%; }
+  .orbit-details { order: 3; width: 100%; }
+  .model-notes { order: 4; width: 100%; }
+  .controls { order: 1; width: 100%; display: grid; grid-template-columns: 1fr 1fr; }
+  .presets-section { grid-column: 1 / -1; border-bottom: 1px solid var(--line); }
+  .preset-grid { grid-template-columns: repeat(5,minmax(0,1fr)); }
+  .preset-grid .binary-preset { grid-column: auto; margin-top: 0; }
+  .preset-grid button { justify-content: center; }
+  .binary-symbol { display: none; }
+  .control-section + .control-section { border-top: 0; }
+  .view-controls { border-left: 1px solid var(--line); }
+  .scene { height: 470px; }
+  #orbit-description { display: inline; }
+  .metrics { padding-top: 21px; }
+  .detail-values { grid-template-columns: repeat(3,minmax(0,1fr)); }
+  .page-footer { flex-direction: column; gap: 3px; }
+}
+@media (max-width: 530px) {
+  .app-shell { padding: 17px 12px 12px; }
+  .page-header { margin-bottom: 17px; }
+  .brand { gap: 11px; }
+  .eyebrow { font-size: 9px; letter-spacing: .14em; }
+  h1 { font-size: 30px; }
+  .brand-mark { font-size: 49px; }
+  .simulation-heading { padding: 15px 16px 0; min-height: 45px; }
+  #orbit-description { display: none; }
+  .scene { height: 390px; min-height: 310px; }
+  .scene-legend { left: 16px; top: 12px; font-size: 9px; gap: 7px 12px; }
+  .playback-bar { flex-wrap: wrap; padding: 12px 14px; gap: 13px; }
+  .playback-actions { flex: 1; }
+  .playback-actions button { flex: 1; min-height: 40px; }
+  .time-scale-field { width: 100%; }
+  .time-scale-field label { font-size: 11px; }
+  .time-scale-field input { height: 18px; }
+  .metrics { gap: 10px; padding-top: 19px; }
+  .metric output { font-size: 23px; }
+  .metric > span { font-size: 10px; }
+  .metric small { font-size: 9px; }
+  .detail-values { grid-template-columns: repeat(2,minmax(0,1fr)); gap: 14px; }
+  .controls { display: block; }
+  .control-section { padding: 20px; }
+  .control-section + .control-section { border-top: 1px solid var(--line); }
+  .presets-section { border-bottom: 0; }
+  .view-controls { border-left: 0; }
+  .preset-grid { grid-template-columns: repeat(2,minmax(0,1fr)); }
+  .preset-grid .binary-preset { grid-column: 1 / -1; }
+  .binary-symbol { display: inline; }
+  .field-heading, .checkbox-list label, select { font-size: 13px; }
+  .field-description, .small-note, .range-endpoints { font-size: 11px; }
+  .precise-value input { font-size: 16px; width: 116px; }
+  .shortcut-row button { min-height: 38px; font-size: 11px; }
+  .checkbox-list label { min-height: 32px; }
+  .model-notes summary { padding: 4px 0; }
+}
+@media (prefers-reduced-motion: reduce) { button { transition: none; } }
+
+</style>
+
+
+</head>
+<body>
+  <div class="app-shell">
+    <header class="page-header">
+      <div class="brand">
+        <span class="brand-mark" aria-hidden="true">◌</span>
+        <div><p class="eyebrow">ET LITE FYSIKKLABORATORIUM</p><h1>Himmelmekanikk</h1></div>
+      </div>
+      <p class="header-description">Utforsk bevegelsen til to legemer.</p>
+    </header>
+
+    <main class="workspace">
+      <aside class="controls" aria-label="Startbetingelser og visning">
+        <section class="control-section presets-section">
+          <h2>Begynn med en bane</h2>
+          <div class="preset-grid" aria-label="Forhåndsvalgte baner">
+            <button type="button" data-preset="circle" aria-pressed="false"><span class="preset-shape circle-shape" aria-hidden="true"></span>Sirkel</button>
+            <button type="button" data-preset="ellipse" aria-pressed="true"><span class="preset-shape ellipse-shape" aria-hidden="true"></span>Ellipse</button>
+            <button type="button" data-preset="parabola" aria-pressed="false"><span class="preset-shape parabola-shape" aria-hidden="true"></span>Parabel</button>
+            <button type="button" data-preset="hyperbola" aria-pressed="false"><span class="preset-shape hyperbola-shape" aria-hidden="true"></span>Hyperbel</button>
+            <button type="button" data-preset="binary" aria-pressed="false" class="binary-preset"><span class="binary-symbol" aria-hidden="true">● · ●</span>To like masser</button>
+          </div>
+        </section>
+
+        <section class="control-section initial-conditions">
+          <div class="section-heading"><h2>Startbetingelser</h2><span class="small-note">Endringer starter på nytt</span></div>
+          <div class="field mass-field">
+            <div class="field-heading"><label for="mass-ratio">Masseforhold <span class="math">m / M</span></label><output id="mass-ratio-value" for="mass-ratio">0,05</output></div>
+            <input id="mass-ratio" type="range" min="0" max="2" step="0.001" value="0.05" aria-describedby="mass-description">
+            <div class="range-endpoints" aria-hidden="true"><span>Testpartikkel</span><span>2 × M</span></div>
+            <div class="precise-value"><label for="mass-ratio-number">Nøyaktig verdi</label><input id="mass-ratio-number" type="number" min="0" max="5" step="0.001" value="0.05" inputmode="decimal"><span>× M</span></div>
+            <p class="field-description" id="mass-description">Begge legemene beveger seg rundt det felles massesenteret.</p>
+          </div>
+
+          <div class="field">
+            <div class="field-heading"><label for="distance">Startavstand <span class="math">r₀</span></label><output id="distance-value" for="distance">1,00 R</output></div>
+            <input id="distance" type="range" min="0.25" max="4" step="0.05" value="1">
+          </div>
+
+          <div class="field">
+            <div class="field-heading"><label for="speed">Relativ startfart <span class="math">v₀</span></label><output id="speed-value" for="speed">1,25</output></div>
+            <input id="speed" type="range" min="0" max="4" step="0.01" value="1.25" aria-describedby="speed-reference">
+            <div class="precise-value"><label for="speed-number">Nøyaktig verdi</label><input id="speed-number" type="number" min="0" max="10" step="0.01" value="1.25" inputmode="decimal"><span>√(GM/R)</span></div>
+            <div class="shortcut-row"><button type="button" id="circular-button">Sirkelhastighet</button><button type="button" id="escape-button">Unnslippingsfart</button></div>
+            <p class="field-description" id="speed-reference">Farten måles i forhold til det andre legemet.</p>
+          </div>
+
+          <div class="field">
+            <div class="field-heading"><label for="angle">Retning fra tangenten</label><output id="angle-value" for="angle">0°</output></div>
+            <input id="angle" type="range" min="-90" max="90" step="1" value="0">
+            <div class="range-endpoints" aria-hidden="true"><span>−90° inn</span><span>0° tangent</span><span>+90° ut</span></div>
+          </div>
+        </section>
+
+        <section class="control-section view-controls">
+          <h2>Visning</h2>
+          <label class="select-label" for="reference-frame">Referansesystem</label>
+          <select id="reference-frame">
+            <option value="barycentric">Felles massesenter</option>
+            <option value="primary">Følg sentrallegemet M</option>
+            <option value="relative">Relativ bane</option>
+          </select>
+          <div class="checkbox-list">
+            <label><input id="show-trails" type="checkbox" checked><span>Vis banespor</span></label>
+            <label><input id="show-vectors" type="checkbox"><span>Vis hastighet og A-vektor</span></label>
+            <label><input id="show-apsides" type="checkbox"><span>Vis nærmeste og fjerneste punkt</span></label>
+          </div>
+          <div class="field zoom-field">
+            <div class="field-heading"><label for="zoom">Zoom</label><output id="zoom-value" for="zoom">1,00×</output></div>
+            <input id="zoom" type="range" min="0.4" max="3" step="0.05" value="1">
+          </div>
+        </section>
+      </aside>
+
+      <div class="simulation-column">
+        <section class="simulation" aria-label="Animert planetbane">
+          <div class="simulation-heading">
+            <div class="orbit-status"><span class="status-dot" aria-hidden="true"></span><strong id="orbit-type">Ellipse</strong><span id="orbit-description">En bundet bane</span></div>
+            <div class="time-readout"><span>Tid</span><output id="time-display">0,00</output></div>
+          </div>
+          <div id="scene" class="scene">
+            <canvas id="orbit-canvas" role="img" aria-label="Animasjon av to legemer som beveger seg under gjensidig gravitasjon. Banetype og egenskaper vises under figuren.">Nettleseren må støtte canvas for å vise animasjonen. Baneegenskapene finnes nedenfor.</canvas>
+            <div class="scene-legend" aria-label="Legender"><span><i class="legend-dot primary-dot"></i>Sentrallegeme M</span><span><i class="legend-dot secondary-dot"></i>Legeme m</span><span><i class="legend-center">+</i>Massesenter</span></div>
+            <p id="error-message" class="error-message" role="alert" hidden></p>
+          </div>
+          <div class="playback-bar">
+            <div class="playback-actions"><button type="button" id="play-button" class="play-button" aria-pressed="true">Pause</button><button type="button" id="reset-button">Til start</button><button type="button" id="fit-button">Tilpass bane</button></div>
+            <div class="time-scale-field"><label for="time-scale">Tempo <output id="time-scale-value" for="time-scale">1,0×</output></label><input id="time-scale" type="range" min="0.1" max="4" step="0.1" value="1"></div>
+          </div>
+        </section>
+
+        <section class="metrics" aria-label="Banens egenskaper">
+          <div class="metric"><span>Eksentrisitet <span class="math">e</span></span><output id="eccentricity-value">—</output><small>0: sirkel · 1: parabel</small></div>
+          <div class="metric"><span>Spesifikk energi <span class="math">ε</span></span><output id="energy-value">—</output><small>Negativ energi gir en bundet bane</small></div>
+          <div class="metric"><span>Omløpstid <span class="math">T</span></span><output id="period-value">—</output><small>I modellens tidsenhet</small></div>
+        </section>
+
+        <section class="orbit-details" aria-label="Flere baneegenskaper">
+          <dl class="detail-values">
+            <div><dt>Minste avstand</dt><dd id="periapsis-value">—</dd></div>
+            <div><dt>Største avstand</dt><dd id="apoapsis-value">—</dd></div>
+            <div><dt>Dreieimpuls <span class="math">h</span></dt><dd id="angular-momentum-value">—</dd></div>
+            <div><dt>Sirkelhastighet ved start</dt><dd id="circular-speed-value">—</dd></div>
+            <div><dt>Unnslippingsfart ved start</dt><dd id="escape-speed-value">—</dd></div>
+          </dl>
+          <p id="a-vector-description" class="vector-note">A-vektoren peker mot periapsis, og lengden angir hvor langstrakt den relative banen er.</p>
+        </section>
+
+        <details class="model-notes">
+          <summary>Modellen og enhetene</summary>
+          <div class="model-notes-content">
+            <p>Simuleringen bruker Newtons gravitasjon for to punktmasser. Masseforholdet er <span class="math">q = m/M</span>. Når massene er sammenlignbare, beveger begge seg tydelig rundt det felles massesenteret. Verdien <span class="math">q = 0</span> er testpartikkelgrensen.</p>
+            <p>Enhetene velges slik at <span class="math">G = M = R = 1</span>. Avstander måles i <span class="math">R</span>, fart i <span class="math">√(GM/R)</span> og tid i <span class="math">√(R³/GM)</span>. I disse enhetene har den relative bevegelsen gravitasjonsparameteren <span class="math">μ = 1 + q</span>, som tilsvarer <span class="math">G(M + m)</span>.</p>
+            <p>Startfarten er hastigheten til <span class="math">m</span> relativt til <span class="math">M</span>. Energi og dreieimpuls er oppgitt per redusert masse, i enhetene <span class="math">GM/R</span> og <span class="math">√(GMR)</span>. Å følge sentrallegemet er et valg av visning; begge legemene inngår fortsatt i fysikken.</p>
+            <p>Markørenes størrelser er gjort synlige og er ikke i målestokk. Modellen har ingen fysiske overflater eller kollisjonsradier. Endrer du en startbetingelse, begynner simuleringen på nytt med den nye verdien.</p>
+            <p>Stiplet linje viser den beregnede banen, mens det heltrukne sporet viser bevegelsen som har skjedd. Åpne og svært langstrakte baner kan fortsette utenfor utsnittet. Velg «Tilpass bane» for å ta med legemenes nåværende posisjoner.</p>
+          </div>
+        </details>
+      </div>
+    </main>
+    <p id="live-status" class="sr-only" aria-live="polite" aria-atomic="true"></p>
+    <footer class="page-footer"><span>Newtonsk gravitasjon · To legemer · Ett baneplan</span><span>Fra Keplers planetbaner til hydrogenatomet</span></footer>
+  </div>
+<script>
+/* Newtonian two-body motion in G = M = R = 1 units.
+ * The universal Kepler equation is solved afresh for each requested time:
+ * no integration steps or accumulated integration drift. Reference:
+ * Wisdom & Hernandez (2015), https://doi.org/10.1093/mnras/stv1862.
+ */
+(function (root, factory) {
+  const api = factory();
+  if (typeof module === 'object' && module.exports) module.exports = api;
+  root.OrbitPhysics = api;
+})(typeof globalThis !== 'undefined' ? globalThis : this, function () {
+  'use strict';
+  const TAU = 2 * Math.PI;
+  const norm = a => Math.hypot(a[0], a[1]);
+  const scale = (a, k) => [a[0] * k, a[1] * k];
+
+  // Stable Stumpff functions at and on both sides of the parabolic limit.
+  function stumpff(z) {
+    if (Math.abs(z) < 0.1) {
+      let c = 0.5, s = 1 / 6, tc = c, ts = s;
+      for (let k = 1; k < 12; k++) {
+        tc *= -z / ((2 * k + 1) * (2 * k + 2));
+        ts *= -z / ((2 * k + 2) * (2 * k + 3));
+        c += tc; s += ts;
+      }
+      return [c, s];
+    }
+    if (z > 0) {
+      const u = Math.sqrt(z);
+      return [2 * Math.sin(u / 2) ** 2 / z, (u - Math.sin(u)) / (u * u * u)];
+    }
+    const u = Math.sqrt(-z);
+    if (u > 700) return [Infinity, Infinity];
+    return [2 * Math.sinh(u / 2) ** 2 / (-z), (Math.sinh(u) - u) / (u * u * u)];
+  }
+
+  // Time between the origin and r0 on a radial trajectory, on one branch.
+  function radialFlightTime(r0, energy, mu) {
+    const x = Math.max(-1, energy * r0 / mu);
+    let integral;
+    if (Math.abs(x) < 0.001) {
+      integral = 2 / 3;
+      let coefficient = 1;
+      for (let n = 1; n < 12; n++) {
+        coefficient *= -(2 * n - 1) * x / (2 * n);
+        integral += coefficient / (n + 1.5);
+      }
+    } else if (x > 0) {
+      const u = Math.sqrt(x);
+      integral = Math.sqrt(1 + x) / x - Math.asinh(u) / (u * u * u);
+    } else {
+      const u = Math.sqrt(-x);
+      integral = (Math.asin(u) - u * Math.sqrt(1 + x)) / (u * u * u);
+    }
+    return r0 ** 1.5 / Math.sqrt(2 * mu) * integral;
+  }
+
+  function createOrbit(input = {}) {
+    const config = {
+      massRatio: Number(input.massRatio ?? 0.01),
+      r0: Number(input.r0 ?? 1),
+      speed: Number(input.speed ?? 1),
+      angleDeg: Number(input.angleDeg ?? 0)
+    };
+    if (!Object.values(config).every(Number.isFinite)) throw new RangeError('Alle startverdier må være endelige tall.');
+    if (config.massRatio < 0 || config.r0 <= 0 || config.speed < 0) {
+      throw new RangeError('Masseforhold og fart må være ikke-negative, og avstanden må være positiv.');
+    }
+    const {massRatio: q, r0, speed, angleDeg} = config;
+    const mu = 1 + q, sqrtMu = Math.sqrt(mu);
+    const angle = angleDeg * Math.PI / 180;
+    let vx = speed * Math.sin(angle), vy = speed * Math.cos(angle);
+    // Exact cardinal directions should remain exactly radial / tangential.
+    if (Math.abs(vx) < 1e-14 * speed) vx = 0;
+    if (Math.abs(vy) < 1e-14 * speed) vy = 0;
+    const initialR = [r0, 0], initialV = [vx, vy];
+    let energy = (vx * vx + vy * vy) / 2 - mu / r0;
+    if (Math.abs(energy) <= 8 * Number.EPSILON * mu / r0) energy = 0;
+    const h = r0 * vy;
+    const radial = h === 0;
+    const alpha = -2 * energy / mu;
+    const eVec = [(vy * h - mu) / mu, -vx * h / mu];
+    const e = norm(eVec);
+    const p = h * h / mu;
+    const a = energy === 0 ? null : -mu / (2 * energy);
+    const period = energy < 0 && !radial ? TAU * Math.sqrt(a * a * a / mu) : null;
+    const periapsis = radial ? 0 : p / (1 + e);
+    const apoapsis = energy < 0 ? a * (1 + e) : null;
+    const circularSpeed = Math.sqrt(mu / r0);
+    const escapeSpeed = Math.SQRT2 * circularSpeed;
+    const type = radial ? 'radial' : e < 1e-10 ? 'circle' : energy < 0 ? 'ellipse' : energy === 0 ? 'parabola' : 'hyperbola';
+    let collisionTime = null;
+    if (radial && (vx < 0 || energy < 0)) {
+      const branchTime = radialFlightTime(r0, energy, mu);
+      collisionTime = vx <= 0 ? branchTime : TAU * Math.sqrt(a * a * a / mu) - branchTime;
+    }
+
+    function universal(chi, target) {
+      const z = alpha * chi * chi;
+      const [c, s] = stumpff(z);
+      if (!Number.isFinite(c) || !Number.isFinite(s)) return {f: Infinity, derivative: Infinity};
+      const x2c = chi * chi * c;
+      const x3s = chi * chi * chi * s;
+      const f = r0 * vx / sqrtMu * x2c + (1 - alpha * r0) * x3s + r0 * chi - target;
+      const derivative = r0 * vx / sqrtMu * chi * (1 - z * s) + (1 - alpha * r0) * x2c + r0;
+      return {f, derivative, c, s};
+    }
+
+    function solveChi(dt) {
+      const target = sqrtMu * dt;
+      let low = 0, high = Math.sqrt(r0);
+      for (let i = 0; universal(high, target).f < 0; i++) {
+        if (i > 100) throw new RangeError('Tiden er utenfor beregningsområdet.');
+        high *= 2;
+      }
+      let x = Math.min(high, target / r0);
+      if (x === high) x *= 0.5;
+      for (let i = 0; i < 120; i++) {
+        const result = universal(x, target);
+        if (Math.abs(result.f) <= 4 * Number.EPSILON * Math.max(target, r0 * x, 1e-12)) return x;
+        if (result.f > 0) high = x; else low = x;
+        if (high - low <= 4 * Number.EPSILON * Math.max(high, 1e-10)) return (low + high) / 2;
+        const proposed = x - result.f / result.derivative;
+        x = Number.isFinite(proposed) && proposed > low && proposed < high ? proposed : (low + high) / 2;
+      }
+      return (low + high) / 2;
+    }
+
+    function sample(time) {
+      if (!Number.isFinite(time) || time < 0) throw new RangeError('Tiden må være et endelig, ikke-negativt tall.');
+      if (collisionTime !== null && time >= collisionTime) {
+        return {r: [0, 0], v: null, distance: 0, speed: null, collision: true, t: collisionTime};
+      }
+      const dt = period ? time % period : time;
+      if (dt === 0) return {r: initialR.slice(), v: initialV.slice(), distance: r0, speed, collision: false, t: time};
+      const chi = solveChi(dt), [c, s] = stumpff(alpha * chi * chi);
+      const x2c = chi * chi * c, x3s = chi * chi * chi * s;
+      const f = 1 - x2c / r0;
+      const g = dt - x3s / sqrtMu;
+      const r = [f * r0 + g * vx, g * vy];
+      const distance = norm(r);
+      // Differentiate r(chi), then resolve the velocity into radial and
+      // tangential components. This avoids cancellation in the f/g
+      // derivatives when an escaping body is far from its initial position.
+      const z = alpha * chi * chi;
+      const radialSpeed = (r0 * vx * (1 - z * c) +
+        sqrtMu * (1 - alpha * r0) * chi * (1 - z * s)) / distance;
+      const tangentSpeed = h / distance;
+      const ux = r[0] / distance, uy = r[1] / distance;
+      const v = [radialSpeed * ux - tangentSpeed * uy,
+        radialSpeed * uy + tangentSpeed * ux];
+      return {r, v, distance, speed: norm(v), collision: false, t: time};
+    }
+
+    function bodies(time) {
+      const relative = sample(time);
+      return {
+        primary: {r: scale(relative.r, -q / (1 + q)), v: relative.v && scale(relative.v, -q / (1 + q))},
+        secondary: {r: scale(relative.r, 1 / (1 + q)), v: relative.v && scale(relative.v, 1 / (1 + q))},
+        relative
+      };
+    }
+
+    function path({extent = 12 * r0, samples = 720} = {}) {
+      if (!(extent > 0) || !Number.isFinite(extent)) throw new RangeError('Utsnittet må være positivt og endelig.');
+      const count = Math.max(24, Math.min(10000, Math.round(samples) || 720));
+      if (radial) {
+        const end = Math.min(extent, apoapsis ?? extent);
+        return Array.from({length: count + 1}, (_, i) => [end * i / count, 0]);
+      }
+      if (extent < periapsis) return [];
+      const axis = e > 1e-12 ? [eVec[0] / e, eVec[1] / e] : [1, 0];
+      const side = [-axis[1], axis[0]];
+      let limit = Math.PI;
+      if (energy >= 0 || (apoapsis && apoapsis > extent)) {
+        limit = Math.acos(Math.max(-1, Math.min(1, (p / extent - 1) / e)));
+      }
+      const result = [];
+      for (let i = 0; i <= count; i++) {
+        const phi = -limit + 2 * limit * i / count;
+        const radius = p / (1 + e * Math.cos(phi));
+        const x = radius * Math.cos(phi), y = radius * Math.sin(phi);
+        result.push([axis[0] * x + side[0] * y, axis[1] * x + side[1] * y]);
+      }
+      return result;
+    }
+
+    return Object.freeze({config: Object.freeze(config), mu, energy, h, eVec, A: scale(eVec, mu), e, p, a,
+      period, periapsis, apoapsis, circularSpeed, escapeSpeed, type, collisionTime,
+      initialR, initialV, sample, bodies, path});
+  }
+  return Object.freeze({createOrbit});
+});
+
+</script>
+<script>
+(function () {
+  'use strict';
+  const $ = function (id) { return document.getElementById(id); };
+  const canvas = $('orbit-canvas');
+  const ctx = canvas.getContext('2d');
+  const names = {circle: 'Sirkel', ellipse: 'Ellipse', parabola: 'Parabel', hyperbola: 'Hyperbel', radial: 'Radiell bevegelse'};
+  const defaults = {massRatio: 0.05, r0: 1, speed: 1.2 * Math.sqrt(1.05), angleDeg: 0};
+  const clamp = function (v, lo, hi) { return Math.max(lo, Math.min(hi, v)); };
+  const finite = function (v) { return typeof v === 'number' && Number.isFinite(v); };
+  const storageKey = 'planetbaner-v1';
+  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const state = {
+    params: Object.assign({}, defaults), orbit: null, time: 0, running: !reducedMotion,
+    timeScale: 1, zoom: 1, frame: 'barycentric', showTrails: true, showVectors: false,
+    showApsides: false, preset: 'ellipse', path: [], trail: [], current: null,
+    camera: {x: 0, y: 0, span: 4}, width: 800, height: 550, scale: 100,
+    lastStamp: null, lastReadout: 0, dirty: true
+  };
+  try {
+    const saved = JSON.parse(localStorage.getItem(storageKey));
+    if (saved && saved.version === 1) {
+      const p = saved.params || {};
+      if (finite(p.massRatio)) state.params.massRatio = clamp(p.massRatio, 0, 5);
+      if (finite(p.r0)) state.params.r0 = clamp(p.r0, 0.25, 4);
+      if (finite(p.speed)) state.params.speed = clamp(p.speed, 0, 10);
+      if (finite(p.angleDeg)) state.params.angleDeg = clamp(p.angleDeg, -90, 90);
+      if (['barycentric', 'primary', 'relative'].includes(saved.frame)) state.frame = saved.frame;
+      if (finite(saved.timeScale)) state.timeScale = clamp(saved.timeScale, 0.1, 4);
+      state.showVectors = !!saved.showVectors;
+      state.showApsides = !!saved.showApsides;
+      state.preset = null;
+    }
+  } catch (_) { /* Private browsing can disable storage. */ }
+
+  function save() {
+    try {
+      localStorage.setItem(storageKey, JSON.stringify({
+        version: 1, params: state.params, frame: state.frame, timeScale: state.timeScale,
+        showVectors: state.showVectors, showApsides: state.showApsides
+      }));
+    } catch (_) { /* The simulator also works without storage. */ }
+  }
+  function fmt(n, digits) {
+    if (n === null || n === undefined || Number.isNaN(n)) return '—';
+    if (!Number.isFinite(n)) return '∞';
+    if (Math.abs(n) < 1e-12) n = 0;
+    if (Math.abs(n) >= 100000 || (Math.abs(n) > 0 && Math.abs(n) < 0.0001)) {
+      return n.toExponential(2).replace('.', ',').replace('e+', ' · 10^').replace('e-', ' · 10^−');
+    }
+    return new Intl.NumberFormat('nb-NO', {maximumFractionDigits: digits === undefined ? 3 : digits}).format(n);
+  }
+  function announce(text) { $('live-status').textContent = text; }
+  function message(text) {
+    $('error-message').textContent = text || '';
+    $('error-message').hidden = !text;
+  }
+  function updatePlayback() {
+    $('play-button').textContent = state.running ? 'Pause' : 'Spill av';
+    $('play-button').setAttribute('aria-pressed', String(state.running));
+  }
+  function pointsForFrame(r) {
+    const q = state.params.massRatio;
+    if (state.frame === 'barycentric') {
+      return [[-q * r[0] / (1 + q), -q * r[1] / (1 + q)], [r[0] / (1 + q), r[1] / (1 + q)]];
+    }
+    return [[0, 0], r];
+  }
+  function fit(includeCurrent) {
+    const distance = includeCurrent && state.current ? Math.hypot.apply(null, state.current.r) : 0;
+    const extent = Math.max(6 * state.params.r0, distance * 1.25);
+    state.path = state.orbit.path({extent: extent, samples: 1100});
+    const all = [[0, 0]];
+    state.path.forEach(function (r) { pointsForFrame(r).forEach(function (p) { all.push(p); }); });
+    pointsForFrame(state.orbit.initialR).forEach(function (p) { all.push(p); });
+    if (includeCurrent && state.current) pointsForFrame(state.current.r).forEach(function (p) { all.push(p); });
+    let xmin = Infinity, ymin = Infinity, xmax = -Infinity, ymax = -Infinity;
+    all.forEach(function (p) {
+      if (!finite(p[0]) || !finite(p[1])) return;
+      xmin = Math.min(xmin, p[0]); xmax = Math.max(xmax, p[0]);
+      ymin = Math.min(ymin, p[1]); ymax = Math.max(ymax, p[1]);
+    });
+    state.camera = {
+      x: (xmin + xmax) / 2, y: (ymin + ymax) / 2,
+      span: Math.max(ymax - ymin, (xmax - xmin) / Math.max(0.4, state.width / state.height), state.params.r0 * 0.65) * 1.3
+    };
+    state.zoom = 1;
+    $('zoom').value = '1';
+    $('zoom-value').textContent = '1,00×';
+    state.dirty = true;
+  }
+
+  function updateControls() {
+    const p = state.params, o = state.orbit;
+    $('mass-ratio').max = p.massRatio > 2 ? '5' : '2';
+    $('mass-ratio').value = p.massRatio;
+    document.querySelector('.mass-field .range-endpoints span:last-child').textContent = p.massRatio > 2 ? '5 × M' : '2 × M';
+    $('mass-ratio-number').value = Number(p.massRatio.toPrecision(8));
+    $('mass-ratio-value').textContent = fmt(p.massRatio, 5) + ' × M';
+    $('distance').value = p.r0;
+    $('distance-value').textContent = fmt(p.r0, 2) + ' R';
+    $('speed').max = String(Math.max(4, Math.ceil(p.speed)));
+    $('speed').value = p.speed;
+    $('speed-number').value = Number(p.speed.toPrecision(10));
+    $('speed-value').textContent = fmt(p.speed, 4);
+    $('angle').value = p.angleDeg;
+    $('angle-value').textContent = (p.angleDeg > 0 ? '+' : '') + fmt(p.angleDeg, 1) + '°';
+    $('reference-frame').value = state.frame;
+    $('show-vectors').checked = state.showVectors;
+    $('show-apsides').checked = state.showApsides;
+    $('time-scale').value = state.timeScale;
+    $('time-scale-value').textContent = fmt(state.timeScale, 1) + '×';
+    $('orbit-type').textContent = names[o.type] || o.type;
+    const descriptions = {
+      circle: 'Konstant avstand', ellipse: 'Bundet bevegelse',
+      parabola: 'På unnslippingsgrensen', hyperbola: 'Ubundet bevegelse',
+      radial: o.collisionTime !== null && finite(o.collisionTime) ? 'Bevegelse mot en kollisjon' : 'Bevegelse langs en rett linje'
+    };
+    $('orbit-description').textContent = descriptions[o.type];
+    $('eccentricity-value').textContent = fmt(o.e, Math.abs(o.e - 1) < 0.001 ? 8 : 4);
+    $('energy-value').textContent = fmt(o.energy, 5);
+    $('period-value').textContent = o.period ? fmt(o.period, 3) : 'Ingen';
+    $('periapsis-value').textContent = fmt(o.periapsis, 4) + ' R';
+    $('apoapsis-value').textContent = o.apoapsis === null ? 'Ubundet' : fmt(o.apoapsis, 4) + ' R';
+    $('angular-momentum-value').textContent = fmt(o.h, 4);
+    $('circular-speed-value').textContent = fmt(o.circularSpeed, 5);
+    $('escape-speed-value').textContent = fmt(o.escapeSpeed, 5);
+    $('speed-reference').textContent = fmt(p.speed / o.circularSpeed, 3) + ' × lokal sirkelhastighet. Farten beholdes når massen endres.';
+    $('mass-description').textContent = p.massRatio === 0 ?
+      'Testpartikkelgrensen: M står i massesenteret, mens partikkelen følger gravitasjonsfeltet.' :
+      'M ligger ' + fmt(p.massRatio / (1 + p.massRatio) * 100, 2) + ' % av avstanden fra massesenteret. Begge legemer beveger seg.';
+    $('a-vector-description').textContent = o.type === 'radial' ?
+      'Dreieimpulsen er null. Den radielle banen er et grensetilfelle, selv om e = 1.' :
+      o.type === 'circle' ? 'A = 0: Sirkelen har ingen bestemt periapsisretning.' :
+      'A/μ = e = ' + fmt(o.e, 5) + '. A peker mot periapsis i den relative banen. Pilenes lengder er tilpasset figuren.';
+    document.querySelectorAll('[data-preset]').forEach(function (button) {
+      button.setAttribute('aria-pressed', String(button.dataset.preset === state.preset));
+    });
+    const legend = document.querySelector('.scene-legend');
+    legend.children[0].hidden = state.frame === 'relative';
+    legend.children[2].hidden = state.frame === 'relative';
+    canvas.setAttribute('aria-label', names[o.type] + '. Masseforhold ' + fmt(p.massRatio) +
+      ', eksentrisitet ' + fmt(o.e, 5) + ', energi ' + fmt(o.energy, 5) + '. Juster startbetingelsene med kontrollene.');
+    updatePlayback();
+  }
+
+  function rebuild(announceChange) {
+    try {
+      const orbit = window.OrbitPhysics.createOrbit(state.params);
+      state.orbit = orbit;
+      state.time = 0; state.trail = []; state.lastStamp = null;
+      state.current = orbit.sample(0);
+      state.trail.push(state.current.r);
+      message('');
+      fit(false);
+      updateControls();
+      $('time-display').textContent = '0,00';
+      if (announceChange) announce(names[orbit.type] + '. Eksentrisitet ' + fmt(orbit.e, 5) + '.');
+      save();
+    } catch (err) {
+      state.running = false; updatePlayback();
+      message('Startbetingelsene kunne ikke beregnes: ' + err.message);
+    }
+  }
+  function changeParam(key, value) {
+    if (!finite(value)) return;
+    const limits = {massRatio: [0, 5], r0: [0.25, 4], speed: [0, 10], angleDeg: [-90, 90]};
+    state.params[key] = clamp(value, limits[key][0], limits[key][1]);
+    state.preset = null;
+    rebuild(true);
+  }
+  [['mass-ratio', 'massRatio'], ['distance', 'r0'], ['speed', 'speed'], ['angle', 'angleDeg']].forEach(function (pair) {
+    $(pair[0]).addEventListener('input', function (event) { changeParam(pair[1], Number(event.target.value)); });
+  });
+  [['mass-ratio-number', 'massRatio'], ['speed-number', 'speed']].forEach(function (pair) {
+    $(pair[0]).addEventListener('change', function (event) {
+      if (event.target.value.trim() === '' || !finite(event.target.valueAsNumber)) { updateControls(); return; }
+      changeParam(pair[1], event.target.valueAsNumber);
+    });
+  });
+  document.querySelectorAll('[data-preset]').forEach(function (button) {
+    button.addEventListener('click', function () {
+      const kind = button.dataset.preset;
+      if (kind === 'binary') { state.params.massRatio = 1; state.params.r0 = 1.6; }
+      const vc = Math.sqrt((1 + state.params.massRatio) / state.params.r0);
+      const factors = {circle: 1, ellipse: 1.2, parabola: Math.SQRT2, hyperbola: 1.65, binary: 1.15};
+      state.params.speed = vc * factors[kind];
+      state.params.angleDeg = 0;
+      state.preset = kind;
+      rebuild(true);
+    });
+  });
+  $('circular-button').addEventListener('click', function () {
+    state.params.speed = state.orbit.circularSpeed; state.params.angleDeg = 0;
+    state.preset = 'circle'; rebuild(true);
+  });
+  $('escape-button').addEventListener('click', function () {
+    state.params.speed = state.orbit.escapeSpeed;
+    state.preset = Math.abs(state.params.angleDeg) < 1e-10 ? 'parabola' : null;
+    rebuild(true);
+  });
+  function togglePlay() {
+    if (state.current && state.current.collision) { state.time = 0; state.trail = []; state.current = state.orbit.sample(0); message(''); }
+    state.running = !state.running; state.lastStamp = null; state.dirty = true; updatePlayback();
+  }
+  $('play-button').addEventListener('click', togglePlay);
+  $('reset-button').addEventListener('click', function () {
+    state.running = false; rebuild(false); announce('Tilbake til start. Avspillingen er satt på pause.');
+  });
+  $('fit-button').addEventListener('click', function () { fit(true); announce('Visningen er tilpasset banen og legemenes nåværende posisjoner.'); });
+  $('reference-frame').addEventListener('change', function (event) {
+    state.frame = event.target.value; fit(true); updateControls(); save();
+  });
+  $('time-scale').addEventListener('input', function (event) {
+    state.timeScale = Number(event.target.value); $('time-scale-value').textContent = fmt(state.timeScale, 1) + '×'; save();
+  });
+  $('zoom').addEventListener('input', function (event) {
+    state.zoom = Number(event.target.value); $('zoom-value').textContent = fmt(state.zoom, 2) + '×'; state.dirty = true;
+  });
+  [['show-trails', 'showTrails'], ['show-vectors', 'showVectors'], ['show-apsides', 'showApsides']].forEach(function (pair) {
+    $(pair[0]).addEventListener('change', function (event) { state[pair[1]] = event.target.checked; state.dirty = true; save(); });
+  });
+  document.addEventListener('keydown', function (event) {
+    if (event.code === 'Space' && (event.target === document.body || event.target === canvas)) {
+      event.preventDefault(); togglePlay();
+    }
+  });
+  document.addEventListener('visibilitychange', function () { state.lastStamp = null; });
+
+  function screen(p) {
+    return [state.width / 2 + (p[0] - state.camera.x) * state.scale, state.height / 2 - (p[1] - state.camera.y) * state.scale + 10];
+  }
+  function line(points, color, width, dash) {
+    if (points.length < 2) return;
+    ctx.strokeStyle = color; ctx.lineWidth = width; ctx.setLineDash(dash || []);
+    ctx.beginPath();
+    let begun = false;
+    points.forEach(function (p) {
+      const xy = screen(p);
+      if (!finite(xy[0]) || !finite(xy[1])) { begun = false; return; }
+      if (!begun) { ctx.moveTo(xy[0], xy[1]); begun = true; } else ctx.lineTo(xy[0], xy[1]);
+    });
+    ctx.stroke(); ctx.setLineDash([]);
+  }
+  function dot(p, radius, color, name) {
+    const xy = screen(p);
+    if (xy[0] < -30 || xy[0] > state.width + 30 || xy[1] < -30 || xy[1] > state.height + 30) return false;
+    const glow = ctx.createRadialGradient(xy[0], xy[1], radius * 0.5, xy[0], xy[1], radius * 3.4);
+    glow.addColorStop(0, color + '50'); glow.addColorStop(1, color + '00');
+    ctx.fillStyle = glow; ctx.beginPath(); ctx.arc(xy[0], xy[1], radius * 3.4, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = color; ctx.beginPath(); ctx.arc(xy[0], xy[1], radius, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = '#e6edf1'; ctx.font = '12px system-ui'; ctx.textAlign = 'left';
+    ctx.fillText(name, Math.min(state.width - 25, xy[0] + radius + 7), Math.max(55, xy[1] - radius - 4));
+    return true;
+  }
+  function cross(p, label) {
+    const xy = screen(p);
+    ctx.strokeStyle = '#8298a8'; ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(xy[0] - 5, xy[1]); ctx.lineTo(xy[0] + 5, xy[1]);
+    ctx.moveTo(xy[0], xy[1] - 5); ctx.lineTo(xy[0], xy[1] + 5); ctx.stroke();
+    if (label && state.width >= 500) {
+      ctx.fillStyle = '#91a4b3'; ctx.font = '11px system-ui'; ctx.textAlign = 'left';
+      ctx.fillText(label, xy[0] + 8, xy[1] + 17);
+    }
+  }
+  function arrow(start, vector, color, label, pixelLength) {
+    const n = Math.hypot(vector[0], vector[1]);
+    if (n < 1e-10) return;
+    const a = screen(start);
+    const len = pixelLength || Math.min(110, 28 + n * 30);
+    const dx = vector[0] / n * len, dy = -vector[1] / n * len;
+    const b = [a[0] + dx, a[1] + dy], theta = Math.atan2(dy, dx);
+    ctx.strokeStyle = color; ctx.fillStyle = color; ctx.lineWidth = 1.6;
+    ctx.beginPath(); ctx.moveTo(a[0], a[1]); ctx.lineTo(b[0], b[1]); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(b[0], b[1]);
+    ctx.lineTo(b[0] - 7 * Math.cos(theta - 0.45), b[1] - 7 * Math.sin(theta - 0.45));
+    ctx.lineTo(b[0] - 7 * Math.cos(theta + 0.45), b[1] - 7 * Math.sin(theta + 0.45));
+    ctx.closePath(); ctx.fill();
+    ctx.font = 'italic 14px Georgia'; ctx.textAlign = 'left'; ctx.fillText(label, b[0] + 6, b[1] - 5);
+  }
+  function grid() {
+    const span = state.height / state.scale;
+    const rough = span / 6, mag = Math.pow(10, Math.floor(Math.log10(rough)));
+    const normalized = rough / mag, step = (normalized <= 1 ? 1 : normalized <= 2 ? 2 : normalized <= 5 ? 5 : 10) * mag;
+    const xlo = state.camera.x - state.width / state.scale / 2;
+    const xhi = state.camera.x + state.width / state.scale / 2;
+    const ylo = state.camera.y - state.height / state.scale / 2;
+    const yhi = state.camera.y + state.height / state.scale / 2;
+    ctx.lineWidth = 0.7; ctx.strokeStyle = '#1e3040'; ctx.fillStyle = '#6e8799';
+    ctx.font = '10px system-ui'; ctx.textAlign = 'center';
+    for (let x = Math.ceil(xlo / step) * step; x <= xhi && finite(x); x += step) {
+      const sx = screen([x, 0])[0];
+      ctx.beginPath(); ctx.moveTo(sx, 48); ctx.lineTo(sx, state.height - 30); ctx.stroke();
+      if (sx > 30 && sx < state.width - 35) ctx.fillText(fmt(x, 2), sx, state.height - 15);
+    }
+    for (let y = Math.ceil(ylo / step) * step; y <= yhi && finite(y); y += step) {
+      const sy = screen([0, y])[1];
+      if (sy < 52 || sy > state.height - 40) continue;
+      ctx.beginPath(); ctx.moveTo(24, sy); ctx.lineTo(state.width - 20, sy); ctx.stroke();
+      ctx.textAlign = 'left'; ctx.fillText(fmt(y, 2), 7, sy - 5);
+    }
+    ctx.fillStyle = '#9aabb7'; ctx.textAlign = 'right'; ctx.fillText('x / R', state.width - 12, state.height - 15);
+    ctx.textAlign = 'left'; ctx.fillText('y / R', 8, 64);
+  }
+  function draw() {
+    if (!state.orbit || !state.current) return;
+    state.scale = (state.height - 95) / state.camera.span * state.zoom;
+    ctx.clearRect(0, 0, state.width, state.height);
+    grid();
+    const q = state.params.massRatio;
+    const c1 = state.frame === 'barycentric' ? -q / (1 + q) : 0;
+    const c2 = state.frame === 'barycentric' ? 1 / (1 + q) : 1;
+    const scaled = function (points, k) { return points.map(function (r) { return [r[0] * k, r[1] * k]; }); };
+    ctx.save(); ctx.beginPath(); ctx.rect(0, 44, state.width, state.height - 76); ctx.clip();
+    if (c1 !== 0) line(scaled(state.path, c1), '#edbd6c66', 1.15, [4, 5]);
+    line(scaled(state.path, c2), '#83d2dc77', 1.15, [4, 5]);
+    if (state.showTrails) {
+      if (c1 !== 0) line(scaled(state.trail, c1), '#edbd6c', 2);
+      line(scaled(state.trail, c2), '#83d2dc', 2.2);
+    }
+    if (state.showApsides && state.orbit.type !== 'circle' && state.orbit.type !== 'radial') {
+      const e = state.orbit.e, u = state.orbit.eVec.map(function (n) { return n / e; });
+      function apsis(r, name, sign) {
+        if (!finite(r)) return;
+        const p = [c2 * u[0] * r * sign, c2 * u[1] * r * sign], xy = screen(p);
+        if (xy[0] < 30 || xy[0] > state.width - 90 || xy[1] < 70 || xy[1] > state.height - 55) return;
+        ctx.strokeStyle = '#a3b6bf'; ctx.lineWidth = 1;
+        ctx.beginPath(); ctx.arc(xy[0], xy[1], 4, 0, Math.PI * 2); ctx.stroke();
+        ctx.fillStyle = '#b7c5ce'; ctx.font = '11px system-ui'; ctx.textAlign = 'left';
+        ctx.fillText(state.width < 500 ? (sign === 1 ? 'Peri' : 'Apo') : name, xy[0] + 8, xy[1] + 22);
+      }
+      apsis(state.orbit.periapsis, 'Periapsis', 1);
+      apsis(state.orbit.apoapsis, 'Apoapsis', -1);
+    }
+    const r = state.current.r, positions = pointsForFrame(r);
+    if (state.frame === 'barycentric') cross([0, 0], q > 0.03 ? 'Massesenter' : '');
+    else if (state.frame === 'primary') cross([q / (1 + q) * r[0], q / (1 + q) * r[1]], 'Massesenter');
+    else cross([0, 0], 'r = 0');
+    const primaryVisible = state.frame !== 'relative' ? dot(positions[0], 10, '#edbd6c', 'M') : true;
+    const secondaryRadius = state.frame === 'relative' ? 5 : q === 0 ? 4 : clamp(10 * Math.cbrt(q), 4.5, 16);
+    const secondaryVisible = dot(positions[1], secondaryRadius, '#83d2dc', state.frame === 'relative' ? 'r' : 'm');
+    if (state.showVectors && state.current.v) {
+      const v = state.current.v;
+      if (c1 !== 0) arrow(positions[0], [c1 * v[0], c1 * v[1]], '#e9c996', 'vM');
+      arrow(positions[1], [c2 * v[0], c2 * v[1]], '#a5e5ed', state.frame === 'barycentric' ? 'vm' : 'vrel');
+      if (state.orbit.e > 1e-8) arrow(positions[0], state.orbit.eVec, '#c6b4ed', 'A', Math.min(100, 35 + state.orbit.e * 40));
+    }
+    ctx.restore();
+    ctx.font = '11px system-ui'; ctx.fillStyle = '#9aabb7'; ctx.textAlign = 'right';
+    if (!secondaryVisible || !primaryVisible) ctx.fillText('Utenfor utsnittet · velg Tilpass bane', state.width - 16, 58);
+    else if (state.showVectors) ctx.fillText('Piler skalert for lesbarhet', state.width - 16, state.height - 35);
+    state.dirty = false;
+  }
+  function resize() {
+    const box = $('scene').getBoundingClientRect();
+    state.width = Math.max(1, box.width); state.height = Math.max(1, box.height);
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    canvas.width = Math.round(state.width * dpr); canvas.height = Math.round(state.height * dpr);
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    if (state.orbit) fit(true);
+    state.dirty = true;
+  }
+  new ResizeObserver(resize).observe($('scene'));
+  function tick(stamp) {
+    const elapsed = state.lastStamp === null ? 0 : Math.min((stamp - state.lastStamp) / 1000, 0.06);
+    state.lastStamp = stamp;
+    if (state.running && !document.hidden && state.orbit && elapsed > 0) {
+      const target = state.time + elapsed * state.timeScale;
+      const steps = Math.max(1, Math.ceil(elapsed * state.timeScale / 0.018));
+      try {
+        for (let i = 1; i <= steps; i++) {
+          const t = state.time + (target - state.time) * i / steps;
+          const result = state.orbit.sample(t);
+          state.current = result;
+          state.trail.push(result.r);
+          if (result.collision) {
+            state.running = false;
+            state.time = finite(state.orbit.collisionTime) ? state.orbit.collisionTime : t;
+            message('Punktmassene møtes ved r = 0. Newtons punktmassemodell er singulær her; avspillingen er stoppet.');
+            announce('Radiell kollisjon. Simuleringen er stoppet.'); updatePlayback();
+            break;
+          }
+        }
+        if (state.running) state.time = target;
+        if (state.trail.length > 1500) state.trail.splice(0, state.trail.length - 1500);
+      } catch (err) {
+        state.running = false; updatePlayback();
+        message('Beregningen stoppet: ' + err.message + '. Velg Til start eller nye startbetingelser.');
+      }
+      state.dirty = true;
+    }
+    if (stamp - state.lastReadout > 120) {
+      $('time-display').textContent = fmt(state.time, 2);
+      state.lastReadout = stamp;
+    }
+    if (state.dirty) draw();
+    requestAnimationFrame(tick);
+  }
+  resize(); rebuild(false); requestAnimationFrame(tick);
+})();
+
+</script>
+</body>
+</html>

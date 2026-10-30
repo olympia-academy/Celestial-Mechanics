@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="nb">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#101e2d">
+  <title>Himmelmekanikk · Et laboratorium for to legemer</title>
+  <link rel="stylesheet" href="styles.css">
+  <script defer src="physics.js"></script>
+  <script defer src="app.js"></script>
+</head>
+<body>
+  <div class="app-shell">
+    <header class="page-header">
+      <div class="brand">
+        <span class="brand-mark" aria-hidden="true">◌</span>
+        <div><p class="eyebrow">ET LITE FYSIKKLABORATORIUM</p><h1>Himmelmekanikk</h1></div>
+      </div>
+      <p class="header-description">Utforsk bevegelsen til to legemer.</p>
+    </header>
+
+    <main class="workspace">
+      <aside class="controls" aria-label="Startbetingelser og visning">
+        <section class="control-section presets-section">
+          <h2>Begynn med en bane</h2>
+          <div class="preset-grid" aria-label="Forhåndsvalgte baner">
+            <button type="button" data-preset="circle" aria-pressed="false"><span class="preset-shape circle-shape" aria-hidden="true"></span>Sirkel</button>
+            <button type="button" data-preset="ellipse" aria-pressed="true"><span class="preset-shape ellipse-shape" aria-hidden="true"></span>Ellipse</button>
+            <button type="button" data-preset="parabola" aria-pressed="false"><span class="preset-shape parabola-shape" aria-hidden="true"></span>Parabel</button>
+            <button type="button" data-preset="hyperbola" aria-pressed="false"><span class="preset-shape hyperbola-shape" aria-hidden="true"></span>Hyperbel</button>
+            <button type="button" data-preset="binary" aria-pressed="false" class="binary-preset"><span class="binary-symbol" aria-hidden="true">● · ●</span>To like masser</button>
+          </div>
+        </section>
+
+        <section class="control-section initial-conditions">
+          <div class="section-heading"><h2>Startbetingelser</h2><span class="small-note">Endringer starter på nytt</span></div>
+          <div class="field mass-field">
+            <div class="field-heading"><label for="mass-ratio">Masseforhold <span class="math">m / M</span></label><output id="mass-ratio-value" for="mass-ratio">0,05</output></div>
+            <input id="mass-ratio" type="range" min="0" max="2" step="0.001" value="0.05" aria-describedby="mass-description">
+            <div class="range-endpoints" aria-hidden="true"><span>Testpartikkel</span><span>2 × M</span></div>
+            <div class="precise-value"><label for="mass-ratio-number">Nøyaktig verdi</label><input id="mass-ratio-number" type="number" min="0" max="5" step="0.001" value="0.05" inputmode="decimal"><span>× M</span></div>
+            <p class="field-description" id="mass-description">Begge legemene beveger seg rundt det felles massesenteret.</p>
+          </div>
+
+          <div class="field">
+            <div class="field-heading"><label for="distance">Startavstand <span class="math">r₀</span></label><output id="distance-value" for="distance">1,00 R</output></div>
+            <input id="distance" type="range" min="0.25" max="4" step="0.05" value="1">
+          </div>
+
+          <div class="field">
+            <div class="field-heading"><label for="speed">Relativ startfart <span class="math">v₀</span></label><output id="speed-value" for="speed">1,25</output></div>
+            <input id="speed" type="range" min="0" max="4" step="0.01" value="1.25" aria-describedby="speed-reference">
+            <div class="precise-value"><label for="speed-number">Nøyaktig verdi</label><input id="speed-number" type="number" min="0" max="10" step="0.01" value="1.25" inputmode="decimal"><span>√(GM/R)</span></div>
+            <div class="shortcut-row"><button type="button" id="circular-button">Sirkelhastighet</button><button type="button" id="escape-button">Unnslippingsfart</button></div>
+            <p class="field-description" id="speed-reference">Farten måles i forhold til det andre legemet.</p>
+          </div>
+
+          <div class="field">
+            <div class="field-heading"><label for="angle">Retning fra tangenten</label><output id="angle-value" for="angle">0°</output></div>
+            <input id="angle" type="range" min="-90" max="90" step="1" value="0">
+            <div class="range-endpoints" aria-hidden="true"><span>−90° inn</span><span>0° tangent</span><span>+90° ut</span></div>
+          </div>
+        </section>
+
+        <section class="control-section view-controls">
+          <h2>Visning</h2>
+          <label class="select-label" for="reference-frame">Referansesystem</label>
+          <select id="reference-frame">
+            <option value="barycentric">Felles massesenter</option>
+            <option value="primary">Følg sentrallegemet M</option>
+            <option value="relative">Relativ bane</option>
+          </select>
+          <div class="checkbox-list">
+            <label><input id="show-trails" type="checkbox" checked><span>Vis banespor</span></label>
+            <label><input id="show-vectors" type="checkbox"><span>Vis hastighet og A-vektor</span></label>
+            <label><input id="show-apsides" type="checkbox"><span>Vis nærmeste og fjerneste punkt</span></label>
+          </div>
+          <div class="field zoom-field">
+            <div class="field-heading"><label for="zoom">Zoom</label><output id="zoom-value" for="zoom">1,00×</output></div>
+            <input id="zoom" type="range" min="0.4" max="3" step="0.05" value="1">
+          </div>
+        </section>
+      </aside>
+
+      <div class="simulation-column">
+        <section class="simulation" aria-label="Animert planetbane">
+          <div class="simulation-heading">
+            <div class="orbit-status"><span class="status-dot" aria-hidden="true"></span><strong id="orbit-type">Ellipse</strong><span id="orbit-description">En bundet bane</span></div>
+            <div class="time-readout"><span>Tid</span><output id="time-display">0,00</output></div>
+          </div>
+          <div id="scene" class="scene">
+            <canvas id="orbit-canvas" role="img" aria-label="Animasjon av to legemer som beveger seg under gjensidig gravitasjon. Banetype og egenskaper vises under figuren.">Nettleseren må støtte canvas for å vise animasjonen. Baneegenskapene finnes nedenfor.</canvas>
+            <div class="scene-legend" aria-label="Legender"><span><i class="legend-dot primary-dot"></i>Sentrallegeme M</span><span><i class="legend-dot secondary-dot"></i>Legeme m</span><span><i class="legend-center">+</i>Massesenter</span></div>
+            <p id="error-message" class="error-message" role="alert" hidden></p>
+          </div>
+          <div class="playback-bar">
+            <div class="playback-actions"><button type="button" id="play-button" class="play-button" aria-pressed="true">Pause</button><button type="button" id="reset-button">Til start</button><button type="button" id="fit-button">Tilpass bane</button></div>
+            <div class="time-scale-field"><label for="time-scale">Tempo <output id="time-scale-value" for="time-scale">1,0×</output></label><input id="time-scale" type="range" min="0.1" max="4" step="0.1" value="1"></div>
+          </div>
+        </section>
+
+        <section class="metrics" aria-label="Banens egenskaper">
+          <div class="metric"><span>Eksentrisitet <span class="math">e</span></span><output id="eccentricity-value">—</output><small>0: sirkel · 1: parabel</small></div>
+          <div class="metric"><span>Spesifikk energi <span class="math">ε</span></span><output id="energy-value">—</output><small>Negativ energi gir en bundet bane</small></div>
+          <div class="metric"><span>Omløpstid <span class="math">T</span></span><output id="period-value">—</output><small>I modellens tidsenhet</small></div>
+        </section>
+
+        <section class="orbit-details" aria-label="Flere baneegenskaper">
+          <dl class="detail-values">
+            <div><dt>Minste avstand</dt><dd id="periapsis-value">—</dd></div>
+            <div><dt>Største avstand</dt><dd id="apoapsis-value">—</dd></div>
+            <div><dt>Dreieimpuls <span class="math">h</span></dt><dd id="angular-momentum-value">—</dd></div>
+            <div><dt>Sirkelhastighet ved start</dt><dd id="circular-speed-value">—</dd></div>
+            <div><dt>Unnslippingsfart ved start</dt><dd id="escape-speed-value">—</dd></div>
+          </dl>
+          <p id="a-vector-description" class="vector-note">A-vektoren peker mot periapsis, og lengden angir hvor langstrakt den relative banen er.</p>
+        </section>
+
+        <details class="model-notes">
+          <summary>Modellen og enhetene</summary>
+          <div class="model-notes-content">
+            <p>Simuleringen bruker Newtons gravitasjon for to punktmasser. Masseforholdet er <span class="math">q = m/M</span>. Når massene er sammenlignbare, beveger begge seg tydelig rundt det felles massesenteret. Verdien <span class="math">q = 0</span> er testpartikkelgrensen.</p>
+            <p>Enhetene velges slik at <span class="math">G = M = R = 1</span>. Avstander måles i <span class="math">R</span>, fart i <span class="math">√(GM/R)</span> og tid i <span class="math">√(R³/GM)</span>. I disse enhetene har den relative bevegelsen gravitasjonsparameteren <span class="math">μ = 1 + q</span>, som tilsvarer <span class="math">G(M + m)</span>.</p>
+            <p>Startfarten er hastigheten til <span class="math">m</span> relativt til <span class="math">M</span>. Energi og dreieimpuls er oppgitt per redusert masse, i enhetene <span class="math">GM/R</span> og <span class="math">√(GMR)</span>. Å følge sentrallegemet er et valg av visning; begge legemene inngår fortsatt i fysikken.</p>
+            <p>Markørenes størrelser er gjort synlige og er ikke i målestokk. Modellen har ingen fysiske overflater eller kollisjonsradier. Endrer du en startbetingelse, begynner simuleringen på nytt med den nye verdien.</p>
+            <p>Stiplet linje viser den beregnede banen, mens det heltrukne sporet viser bevegelsen som har skjedd. Åpne og svært langstrakte baner kan fortsette utenfor utsnittet. Velg «Tilpass bane» for å ta med legemenes nåværende posisjoner.</p>
+          </div>
+        </details>
+      </div>
+    </main>
+    <p id="live-status" class="sr-only" aria-live="polite" aria-atomic="true"></p>
+    <footer class="page-footer"><span>Newtonsk gravitasjon · To legemer · Ett baneplan</span><span>Fra Keplers planetbaner til hydrogenatomet</span></footer>
+  </div>
+</body>
+</html>
