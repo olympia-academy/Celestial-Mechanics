@@ -14,7 +14,7 @@ Appen bruker ingen nettjenester, eksterne skrifter eller npm-avhengigheter.
 Prosjektet er utviklet av Dag-Vidar Krogstad Bauer i samarbeid med
 **Codex fra OpenAI**. Kildekoden er tilgjengelig under [MIT-lisensen](LICENSE).
 
-**[Åpne simulatoren på norsk](https://dagvidb.github.io/Celestial-Mechanics/?lang=nb)**
+**[Åpne simulatoren på norsk](https://olympia-academy.github.io/Celestial-Mechanics/?lang=nb)**
 
 Appen finnes på norsk bokmål og engelsk. Lenken over åpner norsk tekst.
 Språkvelgeren endrer grensesnittet uten å starte banen på nytt.

@@ -14,7 +14,7 @@ The app uses no online services, external fonts or npm dependencies.
 The project was developed by Dag-Vidar Krogstad Bauer in collaboration with
 **Codex from OpenAI**. The source code is available under the [MIT license](LICENSE).
 
-**[Open the simulator in English](https://dagvidb.github.io/Celestial-Mechanics/?lang=en)**
+**[Open the simulator in English](https://olympia-academy.github.io/Celestial-Mechanics/?lang=en)**
 
 The app is available in English and Norwegian Bokmål. The language selector
 changes the interface without restarting the orbit. Links from the Norwegian
